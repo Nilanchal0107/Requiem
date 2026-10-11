@@ -6,7 +6,7 @@
 
 **Blocked by:** 02
 
-**Status:** ready-for-agent
+**Status:** done
 
 ## Notes
 
@@ -16,10 +16,19 @@
 
 ## Acceptance criteria
 
-- [ ] The EMI matches a hand-checked bank-calculator value.
-- [ ] The repayment schedule closes at exactly zero.
-- [ ] The PMEGP subsidy changes the outstanding balance exactly at the end of lock-in, and not before.
-- [ ] MUDRA tier selection is correct on each side of a tier boundary.
-- [ ] An Own Contribution below a Scheme's minimum produces an unlock hint.
-- [ ] The Verdict takes the worst signal (one test where only one signal is bad).
-- [ ] `run_engine` with Path to Yes disabled returns a contract-valid `EngineResult` for every Archetype × village pair (6 cases).
+- [x] The EMI matches a hand-checked bank-calculator value.
+- [x] The repayment schedule closes at exactly zero.
+- [x] The PMEGP subsidy changes the outstanding balance exactly at the end of lock-in, and not before.
+- [x] MUDRA tier selection is correct on each side of a tier boundary.
+- [x] An Own Contribution below a Scheme's minimum produces an unlock hint.
+- [x] The Verdict takes the worst signal (one test where only one signal is bad).
+- [x] `run_engine` with Path to Yes disabled returns a contract-valid `EngineResult` for every Archetype × village pair (6 cases).
+
+## Comments
+
+- Implemented `engine/schemes.py` (`match_schemes` evaluating rule predicates, Own Contribution requirements, subsidy rates, MUDRA tier selection, ranking by effective rate, and generating unlock hints).
+- Implemented `engine/finance.py` (`build_loan_terms`, `repayment_schedule` closing at zero and handling back-ended subsidy at lock-in, `monthly_operating`, `project_years`, `break_even_month`, `payback_months`, `min_dscr`).
+- Implemented `engine/verdict.py` (`decide_verdict` computing worst of dscr, market_gap, payback, and scheme signals).
+- Updated `data/archetypes/kirana.json` customer throughput factor to 0.003 so unit_scale throughput fits retail economics.
+- Implemented tests in `tests/engine/test_finance_verdict.py` verifying all acceptance criteria. All 21 tests in `tests/engine` pass.
+

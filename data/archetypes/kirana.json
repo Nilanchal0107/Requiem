@@ -37,9 +37,9 @@
   "working_capital_months": 1,
   "revenue": {
     "unit": "customers",
-    "output_per_unit_per_month": 1,
+    "output_per_unit_per_month": 0.003,
     "price": 800,
-    "note": "Average basket ₹800/customer/month; revenue = customers × ₹800; Nashik rural 2026 assumption"
+    "note": "Average basket ₹800/customer/month; stock turns ~2.4x/mo (0.003 customers/₹ stock); Nashik rural 2026 assumption"
   },
   "operating_cost": {
     "variable_pct_of_revenue": 70,
