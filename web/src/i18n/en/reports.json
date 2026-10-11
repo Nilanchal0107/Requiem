@@ -1,6 +1,9 @@
 {
   "reports.title": "My Reports",
-  "reports.guest": "Log in to see your reports.",
-  "reports.logIn": "Log in",
-  "reports.empty": "No reports yet."
+  "reports.empty": "No saved reports yet",
+  "reports.emptyBody": "Reports you build while logged in appear here.",
+  "reports.buildFirst": "Build your first DPR",
+  "reports.buildNew": "Build a new DPR",
+  "reports.error": "Could not load your reports.",
+  "reports.retry": "Try again"
 }

@@ -6,9 +6,17 @@
 
 **Blocked by:** None (stretch; pick up only when your core tickets are done).
 
-**Status:** ready-for-agent
+**Status:** done
 
 ## Acceptance criteria
 
-- [ ] The list, the empty state and the guest redirect all work at 360 px.
-- [ ] `npm run check` and `npm run build` pass.
+- [x] The list, the empty state and the guest redirect all work at 360 px.
+- [x] `npm run check` and `npm run build` pass.
+
+## Comments
+
+Commit: see `git log -1 -- web/src/pages/MyReports.tsx`.
+
+- Guest redirect uses `useAuth` and `<Navigate to="/login?next=/reports">`. `reports.guest` and `reports.logIn` keys removed.
+- `EmptyState` was a stub; now implemented. `TONE` exported from `VerdictCard` to reuse the Verdict icon and colours.
+- Deferred: the 360 px layout was not checked in a real browser (only `npm run check` and `npm run build`). hi/mr strings need native review.

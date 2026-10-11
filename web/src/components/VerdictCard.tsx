@@ -23,7 +23,7 @@ export type VerdictCardProps = {
 }
 
 // Icon + word + colour, never colour alone.
-const TONE: Record<Verdict["level"], { icon: LucideIcon; card: string }> = {
+export const TONE: Record<Verdict["level"], { icon: LucideIcon; card: string }> = {
   feasible: { icon: CircleCheck, card: "border-ok bg-ok-soft text-ok" },
   feasible_with_changes: { icon: TriangleAlert, card: "border-warn bg-warn-soft text-warn" },
   not_feasible: { icon: CircleX, card: "border-bad bg-bad-soft text-bad" },

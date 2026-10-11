@@ -1,6 +1,9 @@
 {
   "reports.title": "माझे अहवाल",
-  "reports.guest": "तुमचे अहवाल पाहण्यासाठी लॉग इन करा.",
-  "reports.logIn": "लॉग इन",
-  "reports.empty": "अजून कोणताही अहवाल नाही."
+  "reports.empty": "अजून कोणताही अहवाल सेव्ह केलेला नाही",
+  "reports.emptyBody": "लॉग इन करून बनवलेले अहवाल इथे दिसतील.",
+  "reports.buildFirst": "तुमचा पहिला DPR बनवा",
+  "reports.buildNew": "नवीन DPR बनवा",
+  "reports.error": "तुमचे अहवाल लोड होऊ शकले नाहीत.",
+  "reports.retry": "पुन्हा प्रयत्न करा"
 }
