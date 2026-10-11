@@ -11,9 +11,23 @@ class CacheMode(StrEnum):
     REPLAY = "replay"
 
 
+import hashlib
+import json
+
+
 def cache_key(model: str, messages: list[dict[str, Any]], tools: list[dict[str, Any]] | None) -> str:
     """sha256 of model + json(messages) + json(tools) (TRD §6.2). Names the file data/llm_cache/<key>.json.
 
     V2 must add at least one assert check.
     """
-    raise NotImplementedError("llm.cache.cache_key")
+    assert isinstance(model, str), "model must be a string"
+    assert isinstance(messages, list), "messages must be a list"
+
+    blob = {
+        "model": model,
+        "messages": messages,
+        "tools": tools or [],
+    }
+    encoded = json.dumps(blob, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
