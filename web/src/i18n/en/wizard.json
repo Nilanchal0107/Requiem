@@ -1,3 +1,11 @@
 {
-  "wizard.title": "New DPR"
+  "wizard.title": "New DPR",
+  "wizard.describe": "Describe your business in your own words",
+  "wizard.step.where": "Where",
+  "wizard.step.business": "Business",
+  "wizard.step.money": "Money",
+  "wizard.step.aboutYou": "About you",
+  "wizard.start": "Start",
+  "wizard.retry": "Try again",
+  "wizard.error": "The report stopped before it finished. Check your connection and try again."
 }

@@ -7,6 +7,7 @@ import { formatFigure, formatMoneyWords } from "../src/lib/format.ts";
 import { useSimulate } from "../src/hooks/useSimulate.ts";
 import { useChat } from "../src/hooks/useChat.ts";
 import { useCompare } from "../src/hooks/useCompare.ts";
+import { createReport, openReportStream } from "../src/hooks/useReportStream.ts";
 
 // i18n: a missing key in hi/mr falls back to en; a key nobody has is returned as-is.
 const catalogs: Record<Lang, Catalog> = {
@@ -69,6 +70,58 @@ assert.deepEqual(await useCompare()(compareRequest), { summary: "x" });
 assert.equal(seen.at(-1)!.url, "/api/compare");
 assert.equal(seen.at(-1)!.init.method, "POST");
 assert.equal(seen.at(-1)!.init.body, JSON.stringify(compareRequest));
+
+// createReport: POSTs the intake and returns the new report id.
+reply = new Response(JSON.stringify({ report_id: "r-1" }), { status: 200, headers: { "content-type": "application/json" } });
+assert.equal(await createReport({ village_code: "FX1002" } as never), "r-1");
+assert.equal(seen.at(-1)!.url, "/api/reports");
+assert.equal(seen.at(-1)!.init.method, "POST");
+
+// openReportStream: a fake EventSource records listeners so the check can fire events by hand.
+type Listener = (e: { data: string }) => void;
+class FakeEventSource {
+  static last: FakeEventSource;
+  url: string;
+  listeners: Record<string, Listener> = {};
+  onerror: (() => void) | null = null;
+  closed = false;
+  constructor(url: string) {
+    this.url = url;
+    FakeEventSource.last = this;
+  }
+  addEventListener(name: string, fn: Listener) {
+    this.listeners[name] = fn;
+  }
+  close() {
+    this.closed = true;
+  }
+}
+globalThis.EventSource = FakeEventSource as never;
+
+const stages: string[] = [];
+const doneIds: string[] = [];
+let failures = 0;
+const close = openReportStream("r-1", {
+  onStage: (e) => stages.push(`${e.stage}:${e.status}`),
+  onDone: (id) => doneIds.push(id),
+  onError: () => failures++,
+});
+const src = FakeEventSource.last;
+assert.equal(src.url, "/api/reports/r-1/stream");
+src.listeners.stage({ data: JSON.stringify({ stage: "intake", status: "running" }) });
+src.listeners.stage({ data: JSON.stringify({ stage: "intake", status: "done" }) });
+assert.deepEqual(stages, ["intake:running", "intake:done"]);
+src.listeners.done({ data: JSON.stringify({ report_id: "r-1" }) });
+assert.deepEqual(doneIds, ["r-1"]);
+assert.equal(src.closed, true, "done closes the stream before the server's end-of-stream error");
+assert.equal(failures, 0);
+
+const failed = openReportStream("r-2", { onStage: () => {}, onDone: () => {}, onError: () => failures++ });
+FakeEventSource.last.onerror!();
+assert.equal(failures, 1);
+assert.equal(FakeEventSource.last.closed, true);
+failed();
+close();
 
 // Declared stubs: formatting and the V2 hooks throw "not implemented" until V2.
 const figure = { id: "x", label: "x", value: 1, unit: "INR", source: "computed" } as const;
