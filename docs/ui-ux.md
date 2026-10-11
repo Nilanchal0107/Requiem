@@ -281,7 +281,7 @@ One screen with "Log in" / "Create account" tabs, plus a large secondary **"Cont
 *(Pending native-speaker review.)*
 
 ### 6.3 i18n structure
-- `web/src/i18n/{en,hi,mr}.json`, with flat dotted keys grouped by screen: `home.hero.title`, `wizard.step2.title`, `verdict.feasible`, `figure.emi`, `source.census`.
+- `web/src/i18n/<lang>/<namespace>.json` (one file per screen per language, merged by the loader), with flat dotted keys: `home.hero.title`, `wizard.step2.title`, `verdict.feasible`, `figure.emi`, `source.census`.
 - `figure.<figure_id>` keys give the plain label for every id in `trd.md` §5.9.
 - Missing keys fall back to `en`.
 - The language choice persists in `localStorage` and also goes to the API as `IntakeInput.language`.

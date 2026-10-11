@@ -1,0 +1,172 @@
+@import "tailwindcss";
+
+/* Design tokens from docs/ui-ux.md §2. Light theme only. Components use these, never raw hex. */
+:root {
+  --bg: #FAFAF7;
+  --surface: #FFFFFF;
+  --surface-soft: #F1F4F1;
+  --text: #1C2421;
+  --text-muted: #4B5753;
+  --border: #D3DAD5;
+  --border-strong: #7A857F;
+  --primary: #0F6E56;
+  --primary-soft: #E3F1EC;
+  --on-primary: #FFFFFF;
+  --cta: #F2A900;
+  --cta-pressed: #D99700;
+  --ring: #0F6E56;
+  --ok: #1B7A3D;
+  --ok-soft: #E7F4EC;
+  --warn: #B45309;
+  --warn-soft: #FDF0E1;
+  --bad: #B42318;
+  --bad-soft: #FDE8E6;
+  --scrim: rgb(0 0 0 / 0.45);
+
+  /* Spacing (ui-ux §2.3) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* z-index (ui-ux §2.3) */
+  --z-sticky-tabs: 10;
+  --z-action-bar: 20;
+  --z-scrim: 40;
+  --z-sheet: 50;
+  --z-toast: 60;
+
+  --chart-1: var(--primary);
+  --chart-2: #E09B00;
+  --chart-3: #2F6FDB;
+  --chart-4: #8A948F;
+
+  --r-card: 12px;
+  --r-control: 10px;
+  --sh-sheet: 0 -2px 12px rgb(0 0 0 / 0.08);
+  --font-mukta: "Mukta", system-ui, "Noto Sans Devanagari", sans-serif;
+
+  /* shadcn/ui variable names, pointed at the tokens above */
+  --radius: var(--r-control);
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card: var(--surface);
+  --card-foreground: var(--text);
+  --popover: var(--surface);
+  --popover-foreground: var(--text);
+  --primary-foreground: var(--on-primary);
+  --secondary: var(--surface-soft);
+  --secondary-foreground: var(--text);
+  --muted: var(--surface-soft);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--primary-soft);
+  --accent-foreground: var(--primary);
+  --destructive: var(--bad);
+  --input: var(--border-strong);
+}
+
+@theme inline {
+  --font-sans: var(--font-mukta);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-soft: var(--surface-soft);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-primary: var(--primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-on-primary: var(--on-primary);
+  --color-cta: var(--cta);
+  --color-cta-pressed: var(--cta-pressed);
+  --color-ring: var(--ring);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --color-scrim: var(--scrim);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+
+  --radius-card: var(--r-card);
+  --radius-control: var(--r-control);
+  --shadow-sheet: var(--sh-sheet);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-input: var(--input);
+}
+
+@utility text-hero {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+@utility text-h1 {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+@utility text-h2 {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+@utility text-h3 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+@utility text-body {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+@utility text-label {
+  font-size: 16px;
+  font-weight: 500;
+}
+@utility text-caption {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+@layer base {
+  body {
+    @apply bg-bg text-text font-sans leading-[1.6] antialiased;
+    font-size: 16px;
+  }
+  h1, h2, h3 {
+    line-height: 1.25;
+  }
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

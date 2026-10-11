@@ -19,7 +19,7 @@ How the product in [`prd.md`](prd.md) is built. Component layout and flows: [`ar
 | Node | **≥ 20**, **npm** | |
 | Frontend | **React + Vite + TypeScript**, **React Router** (`createBrowserRouter`), **Tailwind** (`@tailwindcss/vite`), **shadcn/ui**, **Recharts** | |
 | Contract types | **`openapi-typescript`** (run with npx) | Generates `web/src/types/contracts.ts` |
-| i18n | Own `t()` over `en.json` / `hi.json` / `mr.json` | No i18n library |
+| i18n | Own `t()` over `web/src/i18n/<lang>/<namespace>.json` (en, hi, mr) | No i18n library |
 | Font | **Mukta** via `@fontsource/mukta` (400/500/600/700) | Latin + Devanagari, self-hosted so it works offline |
 | Icons | **Lucide** (`lucide-react`, comes with shadcn/ui) | No emoji icons |
 | Design | Mobile-first; tokens and components in [`ui-ux.md`](ui-ux.md), screens in [`wireframes.md`](wireframes.md) | |
