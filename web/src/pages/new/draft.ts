@@ -88,3 +88,24 @@ export function toIntake(draft: Draft, language: Lang): IntakeInput {
     language,
   }
 }
+
+/** Copy what the intake parser could fill onto the draft; anything it left out stays as it was. */
+export function applyParsed(draft: Draft, fields: Record<string, unknown>): Draft {
+  const { archetype_id, unit_scale, own_contribution, village_code, eligibility } = fields as Partial<IntakeInput>
+  const next = { ...draft, eligibility: { ...draft.eligibility, ...eligibility } }
+  if (village_code) next.village_code = village_code
+  if (archetype_id) next.archetype_id = archetype_id
+  if (unit_scale != null) next.unit_scale = unit_scale
+  if (own_contribution != null) next.own_contribution = own_contribution
+  return next
+}
+
+/** Of the dot paths the parser could not fill, the ones the Entrepreneur has still not answered. Fields with an honest default (age, farmland…) count as answered. */
+export function stillMissing(draft: Draft, missing: string[]): string[] {
+  return missing.filter((path) => {
+    if (path === "village_code") return !draft.village_code
+    if (path === "own_contribution") return draft.own_contribution === null
+    const field = path.replace("eligibility.", "") as keyof Eligibility
+    return ELIGIBILITY_CHOICES.includes(field as (typeof ELIGIBILITY_CHOICES)[number]) && !draft.eligibility[field]
+  })
+}

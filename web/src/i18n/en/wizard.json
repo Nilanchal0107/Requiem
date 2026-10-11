@@ -91,5 +91,9 @@
   "wizard.unit.poultry": "birds",
   "wizard.unit.tailoring": "machines",
   "wizard.unit.kirana": "of stock",
-  "wizard.unit.flour_mill": "kg per hour"
+  "wizard.unit.flour_mill": "kg per hour",
+  "wizard.describe.placeholder": "For example: I want to start a dairy in my village with 5 animals.",
+  "wizard.describe.go": "Fill the form",
+  "wizard.describe.error": "We could not read that. Check your connection and try again.",
+  "wizard.describe.missing": "Still needed: {fields}"
 }

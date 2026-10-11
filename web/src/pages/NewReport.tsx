@@ -9,7 +9,7 @@ import { useLoad } from "@/hooks/useLoad"
 import { useReportStream } from "@/hooks/useReportStream"
 import { useLang, useT } from "@/i18n"
 import DescribeBox from "@/pages/new/DescribeBox"
-import { clearDraft, firstBadStep, loadDraft, saveDraft, toIntake, validate, type Draft } from "@/pages/new/draft"
+import { applyParsed, clearDraft, firstBadStep, loadDraft, saveDraft, stillMissing, toIntake, validate, type Draft } from "@/pages/new/draft"
 import StepAboutYou from "@/pages/new/StepAboutYou"
 import StepBusiness from "@/pages/new/StepBusiness"
 import StepMoney from "@/pages/new/StepMoney"
@@ -29,6 +29,8 @@ export default function NewReport() {
   // Errors show only after a failed Next; `attempt` re-runs the focus effect on every failed try.
   const [attempt, setAttempt] = useState(0)
   const [showErrors, setShowErrors] = useState(false)
+  // Dot paths the describe box could not fill; shown on every step until answered.
+  const [parsedMissing, setParsedMissing] = useState<string[]>([])
 
   const building = busy || events.length > 0 || failed
   const chosen = archetypes.items?.find((a) => a.id === draft.archetype_id)
@@ -45,6 +47,10 @@ export default function NewReport() {
     setShowErrors(true)
     setAttempt((n) => n + 1)
   }
+
+  const describedMissing = stillMissing(draft, parsedMissing)
+    .map((path) => t(path === "village_code" ? "wizard.where.village" : path === "own_contribution" ? "wizard.money.label" : `wizard.field.${path.replace("eligibility.", "")}`))
+    .join(", ")
 
   const errors = Object.fromEntries(Object.entries(showErrors ? validate(step, draft, required) : {}).map(([f, key]) => [f, t(key)]))
 
@@ -98,7 +104,15 @@ export default function NewReport() {
   return (
     <div className="flex flex-col gap-6 pb-28">
       <h1 className="text-h1">{t("wizard.title")}</h1>
-      {step === 0 && <DescribeBox />}
+      {step === 0 && (
+        <DescribeBox
+          onParsed={({ fields, missing }) => {
+            setDraft((d) => applyParsed(d, fields))
+            setParsedMissing(missing)
+          }}
+        />
+      )}
+      {describedMissing && <p className="rounded-xl bg-primary-soft p-3 text-sm">{t("wizard.describe.missing").replace("{fields}", describedMissing)}</p>}
       <Stepper current={step} total={STEPS} onSelect={goTo} />
 
       {archetypes.error ? (

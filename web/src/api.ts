@@ -10,6 +10,7 @@ export type District = components["schemas"]["District"];
 export type Block = components["schemas"]["Block"];
 export type Village = components["schemas"]["Village"];
 export type SchemeSummary = components["schemas"]["SchemeSummary"];
+export type IntakeParseResponse = components["schemas"]["IntakeParseResponse"];
 
 // Thrown for any non-2xx response; the shape matches what FastAPI sends back.
 export class ApiError extends Error {
@@ -76,4 +77,8 @@ export function listLocalities(district?: string, block?: string): Promise<Distr
   if (district) query.set("district", district)
   if (block) query.set("block", block)
   return request(`/api/localities${query.size ? `?${query}` : ""}`);
+}
+
+export function parseIntake(text: string, language: string): Promise<IntakeParseResponse> {
+  return postJson<IntakeParseResponse>("/api/intake/parse", { text, language });
 }

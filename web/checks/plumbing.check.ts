@@ -12,7 +12,7 @@ import { useSimulate } from "../src/hooks/useSimulate.ts";
 import { useChat } from "../src/hooks/useChat.ts";
 import { useCompare } from "../src/hooks/useCompare.ts";
 import { createReport, openReportStream } from "../src/hooks/useReportStream.ts";
-import { EMPTY_DRAFT, clearDraft, firstBadStep, loadDraft, saveDraft, toIntake, validate } from "../src/pages/new/draft.ts";
+import { EMPTY_DRAFT, applyParsed, stillMissing, clearDraft, firstBadStep, loadDraft, saveDraft, toIntake, validate } from "../src/pages/new/draft.ts";
 
 // i18n: a missing key in hi/mr falls back to en; a key nobody has is returned as-is.
 const catalogs: Record<Lang, Catalog> = {
@@ -231,3 +231,12 @@ import { betterIndex } from "../src/lib/compare.ts";
 assert.equal(betterIndex([1.6, 1.2], "max"), 0);
 assert.equal(betterIndex([28, 14], "min"), 1);
 assert.equal(betterIndex([2, 2], "max"), undefined);
+
+// Describe box: parsed fields land on the draft, and only the unanswered missing paths stay marked.
+const parsed = applyParsed(EMPTY_DRAFT, { archetype_id: "dairy", unit_scale: 5, language: "en" });
+assert.equal(parsed.archetype_id, "dairy");
+assert.equal(parsed.unit_scale, 5);
+assert.equal(parsed.own_contribution, null, "an unparsed field stays empty");
+const gaps = ["village_code", "own_contribution", "eligibility.age", "eligibility.gender"];
+assert.deepEqual(stillMissing(parsed, gaps), ["village_code", "own_contribution", "eligibility.gender"], "age has a default");
+assert.deepEqual(stillMissing({ ...parsed, village_code: "FX1", eligibility: { ...parsed.eligibility, gender: "male" } }, gaps), ["own_contribution"]);

@@ -92,5 +92,9 @@
   "wizard.unit.tailoring": "मशीनें",
   "wizard.unit.kirana": "का माल",
   "wizard.unit.flour_mill": "किलो प्रति घंटा",
-  "wizard._review": "needs native review"
+  "wizard._review": "needs native review",
+  "wizard.describe.placeholder": "जैसे: मैं अपने गाँव में 5 पशुओं के साथ डेयरी शुरू करना चाहता हूँ।",
+  "wizard.describe.go": "फ़ॉर्म भरें",
+  "wizard.describe.error": "हम इसे पढ़ नहीं सके। अपना कनेक्शन जाँचें और फिर कोशिश करें।",
+  "wizard.describe.missing": "अभी भी चाहिए: {fields}"
 }
