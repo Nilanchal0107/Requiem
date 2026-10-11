@@ -27,7 +27,7 @@
 
 ## Comments
 
-- Code and ticket update in one commit (hash in the follow-up docs commit). `tests/test_api_smoke.py`: 15 tests, full suite 30 passing.
+- Done in `1a6f466`. `tests/test_api_smoke.py`: 15 tests, full suite 30 passing.
 - **Code review (medium):** fixed `USE_FIXTURES` parsing (`false` / `off` now disable), a block without a district now returns 404, and `/me` reuses `current_user`. Left as is: the stub login accepts any password and register never returns 409 (the ticket asks for the stub; real 401/409 are V2). The `SESSION_SECRET="change-me"` default predates this ticket; fail-on-unset is a V2/V3 decision. The SQLite engine uses default `check_same_thread`; no route touches the DB yet, so V2 must set it when routes start using the DB. The session key `"user"` and the helper names follow the frozen `UserOut` name.
 - **Module layout:** `api/settings.py` (env, `USE_FIXTURES`, `fixture()` loader), `api/db.py` (the `user`, `report`, `village` tables and `create_tables`), `api/deps.py` (`current_user`, `require_user`). Password helpers `hash_password` / `verify_password` live in `api/auth.py`.
 - **Deviation from `docs/trd.md` §5/§7:** the TRD puts `USE_FIXTURES` in `api/main.py`. The ticket asks for its own module, so routers can import it without a cycle with the app. Followed the ticket.
