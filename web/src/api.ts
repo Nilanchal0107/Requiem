@@ -5,6 +5,7 @@ export type Credentials = components["schemas"]["Credentials"];
 export type UserOut = components["schemas"]["UserOut"];
 export type MeOut = components["schemas"]["MeOut"];
 export type ReportSummary = components["schemas"]["ReportSummary"];
+export type Report = components["schemas"]["Report"];
 
 // Thrown for any non-2xx response; the shape matches what FastAPI sends back.
 export class ApiError extends Error {
@@ -55,4 +56,8 @@ export function me(): Promise<MeOut> {
 
 export function listReports(): Promise<ReportSummary[]> {
   return request<ReportSummary[]>("/api/reports");
+}
+
+export function getReport(id: string): Promise<Report> {
+  return request<Report>(`/api/reports/${id}`);
 }

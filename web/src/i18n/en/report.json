@@ -1,3 +1,27 @@
 {
-  "report.title": "Report"
+  "report.title": "Report",
+  "report.loading": "Loading…",
+  "report.notReady": "This report is not ready yet.",
+  "report.error": "Could not load the report.",
+  "report.retry": "Try again",
+  "report.tab.explanation": "Explanation",
+  "report.tab.numbers": "Numbers",
+  "report.tab.bank": "Bank DPR",
+  "report.tryChanges": "Try changes",
+  "report.ask": "Ask",
+  "report.whatIf.title": "Try changes",
+  "report.chat.title": "Ask",
+  "report.sheet.empty": "Nothing here yet.",
+  "report.bank.section.1": "1. Entrepreneur profile",
+  "report.bank.section.2": "2. Project summary",
+  "report.bank.section.3": "3. Locality market analysis",
+  "report.bank.section.4": "4. Project cost breakdown",
+  "report.bank.section.5": "5. Means of finance",
+  "report.bank.section.6": "6. Scheme terms",
+  "report.bank.section.7": "7. Repayment schedule",
+  "report.bank.section.8": "8. 5-year projected P&L and cash flow",
+  "report.bank.section.9": "9. Break-even month",
+  "report.bank.section.10": "10. DSCR per year",
+  "report.bank.section.11": "11. SWOT and risks",
+  "report.bank.section.12": "12. Application document checklist"
 }

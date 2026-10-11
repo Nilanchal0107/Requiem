@@ -1,1 +1,7 @@
-{}
+{
+  "verdict.feasible": "Feasible",
+  "verdict.feasible_with_changes": "Feasible with changes",
+  "verdict.not_feasible": "Not feasible",
+  "verdict.scheme": "Scheme",
+  "verdict.noScheme": "No scheme matched"
+}

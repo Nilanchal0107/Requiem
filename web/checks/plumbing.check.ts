@@ -2,7 +2,8 @@
 // Run: npm run check
 import assert from "node:assert/strict";
 import { translate, type Catalog, type Lang } from "../src/i18n/resolve.ts";
-import { ApiError, login, listReports, request } from "../src/api.ts";
+import { ApiError, getReport, login, listReports, request } from "../src/api.ts";
+import { parseTab } from "../src/pages/report/tab.ts";
 import { formatFigure, formatMoneyWords } from "../src/lib/format.ts";
 import { useSimulate } from "../src/hooks/useSimulate.ts";
 import { useChat } from "../src/hooks/useChat.ts";
@@ -62,6 +63,18 @@ assert.equal(seen.at(-1)!.init.body, JSON.stringify({ username: "demo", password
 reply = new Response(JSON.stringify([]), { status: 200, headers: { "content-type": "application/json" } });
 assert.deepEqual(await listReports(), []);
 assert.equal(seen.at(-1)!.url, "/api/reports");
+
+// getReport: GET the report by id.
+reply = new Response(JSON.stringify({ id: "r-1" }), { status: 200, headers: { "content-type": "application/json" } });
+assert.deepEqual(await getReport("r-1"), { id: "r-1" });
+assert.equal(seen.at(-1)!.url, "/api/reports/r-1");
+
+// parseTab: the ?tab= value is trusted only when it names a tab; everything else is Explanation.
+assert.equal(parseTab("numbers"), "numbers");
+assert.equal(parseTab("bank"), "bank");
+assert.equal(parseTab("explanation"), "explanation");
+assert.equal(parseTab("nope"), "explanation");
+assert.equal(parseTab(null), "explanation");
 
 // useCompare: POSTs the compare request as JSON and returns the Comparison.
 reply = new Response(JSON.stringify({ summary: "x" }), { status: 200, headers: { "content-type": "application/json" } });
