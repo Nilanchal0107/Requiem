@@ -6,6 +6,9 @@ export type UserOut = components["schemas"]["UserOut"];
 export type MeOut = components["schemas"]["MeOut"];
 export type ReportSummary = components["schemas"]["ReportSummary"];
 export type Report = components["schemas"]["Report"];
+export type District = components["schemas"]["District"];
+export type Block = components["schemas"]["Block"];
+export type Village = components["schemas"]["Village"];
 export type SchemeSummary = components["schemas"]["SchemeSummary"];
 
 // Thrown for any non-2xx response; the shape matches what FastAPI sends back.
@@ -65,4 +68,12 @@ export function getReport(id: string): Promise<Report> {
 
 export function listSchemes(): Promise<SchemeSummary[]> {
   return request<SchemeSummary[]>("/api/schemes");
+}
+
+/** No args: districts. `district`: its blocks. `district` + `block`: its villages. */
+export function listLocalities(district?: string, block?: string): Promise<District[] | Block[] | Village[]> {
+  const query = new URLSearchParams()
+  if (district) query.set("district", district)
+  if (block) query.set("block", block)
+  return request(`/api/localities${query.size ? `?${query}` : ""}`);
 }

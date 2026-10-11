@@ -11,6 +11,7 @@ import { useSimulate } from "../src/hooks/useSimulate.ts";
 import { useChat } from "../src/hooks/useChat.ts";
 import { useCompare } from "../src/hooks/useCompare.ts";
 import { createReport, openReportStream } from "../src/hooks/useReportStream.ts";
+import { EMPTY_DRAFT, clearDraft, firstBadStep, loadDraft, saveDraft, toIntake, validate } from "../src/pages/new/draft.ts";
 
 // i18n: a missing key in hi/mr falls back to en; a key nobody has is returned as-is.
 const catalogs: Record<Lang, Catalog> = {
@@ -186,6 +187,34 @@ const result = (scheme: string | null, level: string) =>
 assert.deepEqual(whatChanged(result("mudra", "feasible"), result("mudra", "feasible")), { scheme: false, verdict: false });
 assert.deepEqual(whatChanged(result("mudra", "not_feasible"), result("pmegp", "feasible")), { scheme: true, verdict: true });
 assert.deepEqual(whatChanged(result(null, "feasible"), result("mudra", "feasible")), { scheme: true, verdict: false });
+
+// Wizard draft: each step names what is missing, the draft survives a reload, and the intake matches the entries.
+const needs = ["age", "gender", "social_category", "education"];
+assert.deepEqual(Object.keys(validate(0, EMPTY_DRAFT, needs)), ["village"]);
+assert.deepEqual(Object.keys(validate(3, EMPTY_DRAFT, needs)), ["gender", "social_category", "education"]);
+assert.deepEqual(Object.keys(validate(3, EMPTY_DRAFT, ["age"])), [], "only the Archetype's fields are asked");
+assert.equal(firstBadStep(EMPTY_DRAFT, needs), 0);
+const filled = {
+  ...EMPTY_DRAFT,
+  village_code: "FX1002",
+  archetype_id: "dairy",
+  unit_scale: 5,
+  own_contribution: 0,
+  eligibility: { ...EMPTY_DRAFT.eligibility, gender: "female", social_category: "obc", education: "10th_pass" },
+} as const;
+assert.equal(firstBadStep(filled, needs), null, "₹0 Own Contribution is a valid entry");
+const intake = toIntake(filled, "mr");
+assert.deepEqual([intake.village_code, intake.archetype_id, intake.unit_scale, intake.own_contribution, intake.language], ["FX1002", "dairy", 5, 0, "mr"]);
+assert.equal(intake.eligibility.gender, "female");
+const mem = new Map<string, string>();
+const store = { getItem: (k: string) => mem.get(k) ?? null, setItem: (k: string, v: string) => void mem.set(k, v), removeItem: (k: string) => void mem.delete(k) };
+saveDraft({ ...filled, step: 2 }, store);
+assert.equal(loadDraft(store).step, 2);
+assert.equal(loadDraft(store).village_code, "FX1002");
+clearDraft(store);
+assert.deepEqual(loadDraft(store), EMPTY_DRAFT);
+mem.set("requiem.wizardDraft", "{broken");
+assert.deepEqual(loadDraft(store), EMPTY_DRAFT, "a corrupt draft starts fresh");
 
 // Declared stubs: the V2 hooks throw "not implemented" until their ticket.
 assert.throws(() => useChat(), /not implemented/);

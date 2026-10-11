@@ -6,7 +6,7 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** done
 
 ## Notes
 
@@ -20,7 +20,16 @@
 
 ## Acceptance criteria
 
-- [ ] Going through the demo persona at 360 px posts an intake that matches the entries, and the stage list and report follow.
-- [ ] Reloading mid-wizard keeps the entries.
-- [ ] The canned intake is gone.
-- [ ] `npm run check` and `npm run build` pass.
+- [x] Going through the demo persona at 360 px posts an intake that matches the entries, and the stage list and report follow.
+- [x] Reloading mid-wizard keeps the entries.
+- [x] The canned intake is gone.
+- [x] `npm run check` and `npm run build` pass.
+
+## Comments
+
+- Commit: see `git log --grep "V2-21"`.
+- Verified in Chrome at 360 px (iframe) against the fixture API: demo persona posted `village_code FX1002, dairy, 5, ₹1,00,000, female/obc/10th_pass`, the stage list ran and the report opened; reload at step 4 kept every entry; the draft is cleared on the first stage event.
+- Filled in the stub components `Stepper`, `ChipGroup`, `ChoiceCard`, `MoneyInput`; `draft.ts` holds the draft, validation and intake mapping (checked in `npm run check`).
+- Deferred: village/district pickers are native selects plus a village search list, not the Command sheet; no "Continue where you left off?" prompt (the draft restores silently); the stage list is still the plain text list (StageTrace is another ticket).
+- `hi`/`mr` wizard copy is machine-assisted; `wizard._review` marks it `needs native review`.
+- For ticket 45 (describe box): `patch()` in `NewReport` is the place to pre-fill the draft.
