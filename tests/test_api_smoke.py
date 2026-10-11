@@ -311,11 +311,98 @@ def test_list_reports_is_401_for_guest_and_only_own_newest_first(client):
     assert summaries[0].verdict is None  # pending: no engine result yet
 
 
-def test_run_pipeline_is_declared_but_not_implemented():
-    from api.pipeline import run_pipeline
+@pytest.fixture
+def pipeline_report(db_engine, monkeypatch):
+    """A pending report plus stubbed loaders and engine, so run_pipeline runs without the AIML bodies."""
+    from datetime import date
+    from types import SimpleNamespace
 
-    with pytest.raises(NotImplementedError):
-        run_pipeline("demo-1", IntakeInput.model_validate(INTAKE))
+    from sqlmodel import Session
+
+    from api import db, pipeline
+    from api.settings import FIXTURES
+
+    demo = json.loads((FIXTURES / "report.json").read_text(encoding="utf-8"))
+    monkeypatch.setattr(db, "engine", db_engine)
+    monkeypatch.setattr(
+        pipeline, "load_archetypes", lambda: [SimpleNamespace(id="dairy", model_dump=lambda **_: {"id": "dairy"})]
+    )
+    monkeypatch.setattr(
+        pipeline, "load_schemes", lambda: [SimpleNamespace(verified_on=date(2026, 10, 1), model_dump=lambda **_: {})]
+    )
+    monkeypatch.setattr(pipeline, "run_engine", lambda *_, **__: EngineResult.model_validate(demo["engine"]))
+    with Session(db_engine) as session:
+        session.add(db.Village(
+            code="FX1002", name="Pimpalgaon Baswant", block_code="B", block_name="Niphad", district_code="D",
+            district_name="Nashik", households=1, population=1, literacy_rate=0.8, workers=1, is_rural=True,
+        ))
+        row = db.Report(status="pending", input=INTAKE)
+        session.add(row)
+        session.commit()
+        return row.id, demo
+
+
+def _stored(db_engine, report_id):
+    from sqlmodel import Session
+
+    from api import db
+
+    with Session(db_engine) as session:
+        return session.get(db.Report, report_id)
+
+
+def test_run_pipeline_llm_failure_still_completes_with_explanation_unavailable(
+    db_engine, pipeline_report, monkeypatch
+):
+    from api import pipeline
+
+    report_id, demo = pipeline_report
+
+    def llm_down(*_):
+        raise RuntimeError("both providers failed")
+
+    monkeypatch.setattr(pipeline, "explain_report", llm_down)
+    events = list(pipeline.run_pipeline(report_id, IntakeInput.model_validate(INTAKE)))
+
+    assert [e.stage for e in events] == [s for s in STAGES for _ in range(2)]
+    assert [e.status for e in events] == ["running", "done"] * 5 + ["running", "failed"]
+    row = _stored(db_engine, report_id)
+    assert row.status == "done" and row.stages == [e.model_dump(mode="json") for e in events]
+    assert row.engine == EngineResult.model_validate(demo["engine"]).model_dump(mode="json")
+    assert row.explanation["available"] is False and row.explanation["sections"] == []
+
+
+def test_run_pipeline_stores_explanation_and_shows_retry(db_engine, pipeline_report, monkeypatch):
+    from api import pipeline
+    from api.contracts import Explanation
+
+    report_id, demo = pipeline_report
+    explanation = Explanation.model_validate({**demo["explanation"], "regenerated": True})
+    monkeypatch.setattr(pipeline, "explain_report", lambda *_: explanation)
+    events = list(pipeline.run_pipeline(report_id, IntakeInput.model_validate(INTAKE)))
+
+    assert [e.status for e in events[-3:]] == ["running", "retrying", "done"]
+    row = _stored(db_engine, report_id)
+    assert row.status == "done" and row.explanation == explanation.model_dump(mode="json")
+
+
+def test_run_pipeline_engine_failure_marks_report_failed_and_raises(db_engine, pipeline_report, monkeypatch):
+    from api import pipeline
+
+    report_id, _ = pipeline_report
+
+    def engine_broken(*_, **__):
+        raise ValueError("bad archetype data")
+
+    monkeypatch.setattr(pipeline, "run_engine", engine_broken)
+    events = []
+    with pytest.raises(ValueError):
+        for event in pipeline.run_pipeline(report_id, IntakeInput.model_validate(INTAKE)):
+            events.append(event)
+
+    assert (events[-1].stage, events[-1].status) == ("market", "failed")
+    row = _stored(db_engine, report_id)
+    assert row.status == "failed" and row.engine is None
 
 
 # --- V1-05: simulate, compare, chat, intake parse, voice transcribe ---------
