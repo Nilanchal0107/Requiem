@@ -3,6 +3,10 @@
 import assert from "node:assert/strict";
 import { translate, type Catalog, type Lang } from "../src/i18n/resolve.ts";
 import { ApiError, request } from "../src/api.ts";
+import { formatFigure, formatMoneyWords } from "../src/lib/format.ts";
+import { useSimulate } from "../src/hooks/useSimulate.ts";
+import { useChat } from "../src/hooks/useChat.ts";
+import { useCompare } from "../src/hooks/useCompare.ts";
 
 // i18n: a missing key in hi/mr falls back to en; a key nobody has is returned as-is.
 const catalogs: Record<Lang, Catalog> = {
@@ -40,5 +44,13 @@ await assert.rejects(request("/api/auth/me"), (err: unknown) => {
   assert.equal(err.detail, "Not logged in");
   return true;
 });
+
+// Declared stubs: formatting and hooks throw "not implemented" until V2.
+const figure = { id: "x", label: "x", value: 1, unit: "INR", source: "computed" } as const;
+assert.throws(() => formatFigure(figure, "en"), /not implemented/);
+assert.throws(() => formatMoneyWords(1e5, "hi"), /not implemented/);
+assert.throws(() => useSimulate(), /not implemented/);
+assert.throws(() => useChat(), /not implemented/);
+assert.throws(() => useCompare(), /not implemented/);
 
 console.log("plumbing checks passed");
