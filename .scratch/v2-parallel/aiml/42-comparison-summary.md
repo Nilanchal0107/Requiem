@@ -6,8 +6,13 @@
 
 **Blocked by:** None (stretch; pick up only when your core tickets are done). Uses the client from 05.
 
-**Status:** ready-for-agent
+**Status:** done
 
 ## Acceptance criteria
 
-- [ ] In replay mode, the summary passes `verify` against the merged, namespaced figures of 2 results.
+- [x] In replay mode, the summary passes `verify` against the merged, namespaced figures of 2 results.
+
+## Comments
+
+- Commit: `V2-42: Comparison summary test` (see `git log`).
+- `explain_comparison` already existed from ticket 05. Added `tests/llm/test_comparison.py`: two real engine results, a scripted reply, summary verified against the namespaced merged figures (digit sentence stripped).
