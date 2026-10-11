@@ -5,7 +5,7 @@ import { translate, type Catalog, type Lang } from "../src/i18n/resolve.ts";
 import { ApiError, getReport, login, listReports, request } from "../src/api.ts";
 import { parseTab } from "../src/pages/report/tab.ts";
 import { formatCompact, formatDate, formatFigure, formatHeadline, formatInr, formatMoneyWords } from "../src/lib/format.ts";
-import { worstSignal } from "../src/lib/verdict.ts";
+import { whatChanged, worstSignal } from "../src/lib/verdict.ts";
 import { shareLink } from "../src/lib/share.ts";
 import { useSimulate } from "../src/hooks/useSimulate.ts";
 import { useChat } from "../src/hooks/useChat.ts";
@@ -174,8 +174,20 @@ const abort = Object.assign(new Error("closed"), { name: "AbortError" });
 assert.equal(await shareLink({ share: async () => { throw abort; }, clipboard }, page), "cancelled");
 assert.equal(copied.length, 2);
 
+// useSimulate: POSTs the changed intake to /api/simulate and returns the EngineResult.
+reply = new Response(JSON.stringify({ archetype_id: "dairy" }), { status: 200, headers: { "content-type": "application/json" } });
+assert.deepEqual(await useSimulate()({ own_contribution: 150000 } as never), { archetype_id: "dairy" });
+assert.equal(seen.at(-1)!.url, "/api/simulate");
+assert.equal(seen.at(-1)!.init.body, JSON.stringify({ own_contribution: 150000 }));
+
+// whatChanged: flags a switched Scheme and a switched Verdict, and nothing when both hold.
+const result = (scheme: string | null, level: string) =>
+  ({ schemes: { best: scheme && { scheme_id: scheme } }, verdict: { level } }) as never;
+assert.deepEqual(whatChanged(result("mudra", "feasible"), result("mudra", "feasible")), { scheme: false, verdict: false });
+assert.deepEqual(whatChanged(result("mudra", "not_feasible"), result("pmegp", "feasible")), { scheme: true, verdict: true });
+assert.deepEqual(whatChanged(result(null, "feasible"), result("mudra", "feasible")), { scheme: true, verdict: false });
+
 // Declared stubs: the V2 hooks throw "not implemented" until their ticket.
-assert.throws(() => useSimulate(), /not implemented/);
 assert.throws(() => useChat(), /not implemented/);
 
 console.log("plumbing checks passed");

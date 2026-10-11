@@ -20,6 +20,7 @@ import { WhatIfSheet } from "@/pages/report/WhatIfSheet"
 import type { components } from "@/types/contracts"
 
 type Figure = components["schemas"]["Figure"]
+type Change = components["schemas"]["Change"]
 
 // The page owns fetching, the tab in the URL, the Figure sheet and the two other sheets. Tab content lives in its own files.
 export default function Report() {
@@ -29,6 +30,12 @@ export default function Report() {
   const [params, setParams] = useSearchParams()
   const { report, error, retry } = useReport(id)
   const [whatIfOpen, setWhatIfOpen] = useState(false)
+  // The Path to Yes change the sheet opens with; null when opened from the bottom bar.
+  const [whatIfChange, setWhatIfChange] = useState<Change | null>(null)
+  const openWhatIf = (change: Change | null) => {
+    setWhatIfChange(change)
+    setWhatIfOpen(true)
+  }
   const [chatOpen, setChatOpen] = useState(false)
   // The figure stays set while the sheet closes, so its content doesn't vanish mid-animation.
   const [shown, setShown] = useState<{ figure: Figure; lang: Lang } | null>(null)
@@ -88,7 +95,7 @@ export default function Report() {
             engine={engine}
             onOpenFigure={openFigure}
             onRetry={retry}
-            onTry={() => setWhatIfOpen(true)}
+            onTry={openWhatIf}
           />
         </TabsContent>
         <TabsContent value="numbers" className="print:hidden">
@@ -101,7 +108,7 @@ export default function Report() {
       </Tabs>
 
       <BottomActionBar>
-        <Button variant="outline" className="h-12 flex-1 gap-2" onClick={() => setWhatIfOpen(true)}>
+        <Button variant="outline" className="h-12 flex-1 gap-2" onClick={() => openWhatIf(null)}>
           <SlidersHorizontal aria-hidden="true" className="size-5" />
           {t("report.tryChanges")}
         </Button>
@@ -111,7 +118,7 @@ export default function Report() {
         </Button>
       </BottomActionBar>
       <FigureSheet figure={shown?.figure ?? null} lang={shown?.lang ?? lang} open={figureOpen} onOpenChange={setFigureOpen} />
-      <WhatIfSheet open={whatIfOpen} onOpenChange={setWhatIfOpen} />
+      <WhatIfSheet open={whatIfOpen} onOpenChange={setWhatIfOpen} report={report} change={whatIfChange} />
       <ChatSheet open={chatOpen} onOpenChange={setChatOpen} />
     </div>
   )

@@ -57,5 +57,16 @@
   "report.better": "बेहतर",
   "report.chart.working": "चालू खर्च के लिए पैसा",
   "report.chart.paid": "भरा",
-  "report.disclaimer": "सिर्फ़ अंदाज़ा है। अपने बैंक से पक्का कर लें।"
+  "report.disclaimer": "सिर्फ़ अंदाज़ा है। अपने बैंक से पक्का कर लें।",
+  "report.whatIf.contribution": "आपका अपना पैसा",
+  "report.whatIf.size": "काम का आकार",
+  "report.whatIf.tenure": "कर्ज की अवधि",
+  "report.whatIf.months": "महीने",
+  "report.whatIf.reset": "फिर से शुरू करें",
+  "report.whatIf.makeNew": "इसे नई DPR बनाएँ",
+  "report.whatIf.making": "आपकी रिपोर्ट बन रही है…",
+  "report.whatIf.schemeChanged": "अब दूसरी योजना बैठती है: {to}",
+  "report.whatIf.verdictChanged": "नतीजा बदलकर हो गया: {to}",
+  "report.whatIf.failed": "आँकड़े अपडेट नहीं हो सके। फिर कोशिश करें।",
+  "report.whatIf.makeFailed": "नई रिपोर्ट नहीं बन सकी। फिर कोशिश करें।"
 }

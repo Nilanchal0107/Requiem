@@ -57,5 +57,16 @@
   "report.better": "चांगले",
   "report.chart.working": "चालू खर्चासाठी पैसे",
   "report.chart.paid": "भरले",
-  "report.disclaimer": "हा फक्त अंदाज आहे. तुमच्या बँकेकडून खात्री करा."
+  "report.disclaimer": "हा फक्त अंदाज आहे. तुमच्या बँकेकडून खात्री करा.",
+  "report.whatIf.contribution": "तुमचे स्वतःचे पैसे",
+  "report.whatIf.size": "व्यवसायाचा आकार",
+  "report.whatIf.tenure": "कर्जाचा कालावधी",
+  "report.whatIf.months": "महिने",
+  "report.whatIf.reset": "पुन्हा सुरू करा",
+  "report.whatIf.makeNew": "ही नवीन DPR बनवा",
+  "report.whatIf.making": "तुमचा अहवाल तयार होत आहे…",
+  "report.whatIf.schemeChanged": "आता दुसरी योजना लागू होते: {to}",
+  "report.whatIf.verdictChanged": "निकाल बदलून झाला: {to}",
+  "report.whatIf.failed": "आकडे अपडेट करता आले नाहीत. पुन्हा प्रयत्न करा.",
+  "report.whatIf.makeFailed": "नवीन अहवाल बनवता आला नाही. पुन्हा प्रयत्न करा."
 }
