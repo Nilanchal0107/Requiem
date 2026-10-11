@@ -39,6 +39,8 @@ Most Entrepreneurs are rural and on budget Android phones: **design mobile-first
 
 Issues and specs are local markdown files under `.scratch/`. See `docs/agents/issue-tracker.md`. Tickets are grouped by version (`.scratch/v1-skeleton/`, `.scratch/v2-parallel/`, `.scratch/v3-merge/`), and each ticket names its owner persona and `Blocked by:` tickets.
 
+**After executing a ticket, update its file:** set `Status: done`, tick the acceptance-criteria checkboxes that now hold, and append a `## Comments` section with the commit hash, anything deferred, and notes for tickets that build on it. Commit the ticket update with the work.
+
 ### Triage labels
 
 Default five-role vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
