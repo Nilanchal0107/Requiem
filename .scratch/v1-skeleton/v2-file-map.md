@@ -22,6 +22,7 @@ Every tracked file has exactly one V2 owner. Split the V2 work by this table. Ch
 | `.env.example` | Fullstack | |
 | `CLAUDE.md` | Fullstack | |
 | `CONTEXT.md` | Fullstack | |
+| `plan.md` | Fullstack | |
 | `docs/*` | Fullstack | |
 | `.scratch/*` | Fullstack | |
 | `.claude/*` | Fullstack | |

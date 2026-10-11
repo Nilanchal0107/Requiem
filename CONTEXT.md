@@ -77,3 +77,7 @@ _Avoid_: Summary, AI report, explainer
 **Verified Figure**:
 A number in the Entrepreneur View that was supplied by the calculation engine rather than written by the AI, and links to its formula and source.
 _Avoid_: Checked number, proof
+
+**Figure id**:
+The stable name of one number in a DPR, written as a placeholder in explanation text; a group member is named `group.member` (e.g. `cost.animals`), and in a Comparison each id is prefixed by its Business Archetype (e.g. `dairy.min_dscr`).
+_Avoid_: Key, variable, token
