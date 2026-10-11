@@ -7,8 +7,12 @@ from fastapi.testclient import TestClient
 from api.contracts import (
     ArchetypeSummary,
     Block,
+    ChatResponse,
+    Comparison,
     District,
+    EngineResult,
     IntakeInput,
+    IntakeParseResponse,
     MeOut,
     OkOut,
     Report,
@@ -16,6 +20,7 @@ from api.contracts import (
     ReportSummary,
     SchemeSummary,
     StageEvent,
+    TranscribeResponse,
     UserOut,
     Village,
 )
@@ -189,3 +194,69 @@ def test_run_pipeline_is_declared_but_not_implemented():
 
     with pytest.raises(NotImplementedError):
         run_pipeline("demo-1", IntakeInput.model_validate(INTAKE))
+
+
+# --- V1-05: simulate, compare, chat, intake parse, voice transcribe ---------
+
+FIXTURE_REPORT_ID = "demo-niphad-dairy"
+
+
+def test_simulate_returns_fixture_engine_result(client):
+    res = client.post("/api/simulate", json=INTAKE)
+    assert res.status_code == 200
+    engine = EngineResult.model_validate(res.json())
+    assert engine.verdict.level in {"feasible", "feasible_with_changes", "not_feasible"}
+    assert "funding_gap" in engine.figures
+
+
+def test_simulate_rejects_bad_body(client):
+    assert client.post("/api/simulate", json={**INTAKE, "own_contribution": -1}).status_code == 422
+
+
+def test_compare_returns_one_result_per_archetype_in_request_order(client):
+    body = {"input": INTAKE, "archetype_ids": ["poultry", "dairy"]}
+    res = client.post("/api/compare", json=body)
+    assert res.status_code == 200
+    comparison = Comparison.model_validate(res.json())
+    assert [r.archetype_id for r in comparison.results] == ["poultry", "dairy"]
+    assert comparison.language == "mr"
+    assert "{{poultry.min_dscr}}" in comparison.summary and "{{dairy.min_dscr}}" in comparison.summary
+
+
+def test_compare_unknown_archetype_is_400(client):
+    body = {"input": INTAKE, "archetype_ids": ["dairy", "nope"]}
+    assert client.post("/api/compare", json=body).status_code == 400
+
+
+@pytest.mark.parametrize("ids", [["dairy"], ["dairy", "poultry", "kirana", "tailoring"]])
+def test_compare_one_or_four_archetypes_is_422(client, ids):
+    assert client.post("/api/compare", json={"input": INTAKE, "archetype_ids": ids}).status_code == 422
+
+
+def test_chat_returns_contract_response_with_citation_and_change(client):
+    body = {"report_id": FIXTURE_REPORT_ID, "message": "Can I borrow less?", "language": "en"}
+    res = client.post("/api/chat", json=body)
+    assert res.status_code == 200
+    chat = ChatResponse.model_validate(res.json())
+    assert len(chat.citations) == 1 and len(chat.suggested_changes) == 1
+    assert chat.tools_used
+
+
+def test_chat_unknown_report_is_404(client):
+    body = {"report_id": "no-such-report", "message": "hi", "language": "en"}
+    assert client.post("/api/chat", json=body).status_code == 404
+
+
+def test_intake_parse_returns_partial_fields_and_missing(client):
+    res = client.post("/api/intake/parse", json={"text": "I want a dairy with five cows", "language": "en"})
+    assert res.status_code == 200
+    parsed = IntakeParseResponse.model_validate(res.json())
+    assert parsed.fields["archetype_id"] == "dairy"
+    assert "village_code" in parsed.missing
+
+
+def test_voice_transcribe_returns_text(client):
+    files = {"audio": ("note.webm", b"\x1a\x45\xdf\xa3", "audio/webm")}
+    res = client.post("/api/voice/transcribe", files=files, data={"language": "en"})
+    assert res.status_code == 200
+    assert TranscribeResponse.model_validate(res.json()).text
