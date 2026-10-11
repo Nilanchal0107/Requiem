@@ -1,4 +1,6 @@
-"""Smoke tests for the V2 catalogue and auth stub: each endpoint answers and matches the contract models."""
+"""Smoke tests for the V2 catalogue, auth stub, and reports: each endpoint answers and matches the contract models."""
+import json
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -6,9 +8,14 @@ from api.contracts import (
     ArchetypeSummary,
     Block,
     District,
+    IntakeInput,
     MeOut,
     OkOut,
+    Report,
+    ReportCreated,
+    ReportSummary,
     SchemeSummary,
+    StageEvent,
     UserOut,
     Village,
 )
@@ -105,3 +112,80 @@ def test_password_helpers_are_declared_but_not_implemented():
         hash_password("secret1")
     with pytest.raises(NotImplementedError):
         verify_password("secret1", "scrypt$00$00")
+
+
+# --- V1-04: reports and SSE stream ------------------------------------------
+
+STAGES = ["intake", "market", "cost", "schemes", "dpr", "explanation"]
+INTAKE = {
+    "village_code": "FX1002",
+    "archetype_id": "dairy",
+    "unit_scale": 5.0,
+    "own_contribution": 100000,
+    "eligibility": {"age": 34, "gender": "female", "social_category": "obc", "education": "10th_pass"},
+    "language": "mr",
+}
+
+
+@pytest.fixture
+def no_stage_delay(monkeypatch):
+    from api import reports
+
+    monkeypatch.setattr(reports, "STAGE_DELAY_S", 0)
+
+
+def parse_sse(text):
+    events = []
+    for block in text.strip().split("\n\n"):
+        lines = dict(line.split(": ", 1) for line in block.splitlines())
+        events.append((lines["event"], json.loads(lines["data"])))
+    return events
+
+
+def test_post_report_returns_id_and_rejects_bad_body(client):
+    res = client.post("/api/reports", json=INTAKE)
+    assert res.status_code == 200
+    assert ReportCreated.model_validate(res.json()).report_id
+
+    bad = {**INTAKE, "own_contribution": -1}
+    assert client.post("/api/reports", json=bad).status_code == 422
+
+
+def test_stream_replays_six_stages_in_order_then_done(client, no_stage_delay):
+    res = client.get("/api/reports/demo-1/stream")
+    assert res.status_code == 200
+    assert res.headers["content-type"].startswith("text/event-stream")
+
+    events = parse_sse(res.text)
+    stage_events = [StageEvent.model_validate(data) for kind, data in events if kind == "stage"]
+    assert [e.stage for e in stage_events] == [s for s in STAGES for _ in range(2)]
+    assert [e.status for e in stage_events] == ["running", "done"] * 6
+
+    assert events[-1] == ("done", {"report_id": "demo-1"})
+
+
+def test_get_report_returns_fixture_under_requested_id(client):
+    res = client.get("/api/reports/demo-1")
+    assert res.status_code == 200
+    report = Report.model_validate(res.json())
+    assert report.id == "demo-1"
+    assert report.engine is not None and report.explanation is not None
+
+
+def test_list_reports_is_401_for_guest_and_one_summary_after_login(client):
+    assert client.get("/api/reports").status_code == 401
+
+    client.post("/api/auth/login", json=CREDS)
+    res = client.get("/api/reports")
+    assert res.status_code == 200
+    summaries = [ReportSummary.model_validate(s) for s in res.json()]
+    assert len(summaries) == 1
+    assert summaries[0].archetype_id == "dairy"
+    assert summaries[0].village_name == "Pimpalgaon Baswant"
+
+
+def test_run_pipeline_is_declared_but_not_implemented():
+    from api.pipeline import run_pipeline
+
+    with pytest.raises(NotImplementedError):
+        run_pipeline("demo-1", IntakeInput.model_validate(INTAKE))
