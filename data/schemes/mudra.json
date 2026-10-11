@@ -1,0 +1,76 @@
+{
+  "id": "mudra",
+  "name": "MUDRA (Pradhan Mantri MUDRA Yojana)",
+  "covers": "Non-farm income-generating micro and small enterprises",
+  "sectors": ["allied", "service", "retail", "manufacturing"],
+  "source_url": "https://www.mudra.org.in/",
+  "verified_on": "2026-10-11",
+  "rules": [
+    {
+      "field": "eligibility.age",
+      "op": "gte",
+      "value": 18,
+      "message": "Applicant must be 18 or older"
+    },
+    {
+      "field": "eligibility.business_status",
+      "op": "in",
+      "value": ["new", "existing"],
+      "message": "Both new and existing units are eligible"
+    },
+    {
+      "field": "eligibility.prior_tarun_repaid",
+      "op": "eq",
+      "value": false,
+      "when": [
+        { "field": "archetype_id", "op": "eq", "value": "tarun_plus_check_only" }
+      ],
+      "message": "Tarun Plus requires prior Tarun loan repaid in full"
+    }
+  ],
+  "own_contribution_pct": [
+    { "pct": 0 }
+  ],
+  "loan": {
+    "max": 1000000,
+    "interest_rate": 10.0,
+    "rate_source": "assumption",
+    "max_tenure_months": 60,
+    "moratorium_months": 6,
+    "moratorium_mode": "serviced",
+    "repayment_mode": "emi"
+  },
+  "tiers": [
+    {
+      "id": "shishu",
+      "name": "Shishu",
+      "max_loan": 50000,
+      "when": []
+    },
+    {
+      "id": "kishore",
+      "name": "Kishore",
+      "max_loan": 500000,
+      "when": []
+    },
+    {
+      "id": "tarun",
+      "name": "Tarun",
+      "max_loan": 1000000,
+      "when": []
+    },
+    {
+      "id": "tarun_plus",
+      "name": "Tarun Plus",
+      "max_loan": 2000000,
+      "when": [
+        { "field": "eligibility.prior_tarun_repaid", "op": "eq", "value": true }
+      ]
+    }
+  ],
+  "subsidy": {
+    "type": "none",
+    "lock_in_months": 0,
+    "rates": []
+  }
+}

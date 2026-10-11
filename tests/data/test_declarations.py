@@ -76,6 +76,7 @@ def test_typo_in_a_key_is_rejected():
         Condition(field="x", op="eq", value=1, whn=[])
 
 
+@pytest.mark.skip(reason="V1 declaration test superceded by V2 implementation")
 @pytest.mark.parametrize("name", ["load_archetypes", "load_schemes", "load_scheme_texts", "seed_villages"])
 def test_loaders_and_seed_are_declared_and_not_implemented(name):
     import data.loaders as loaders
@@ -87,8 +88,10 @@ def test_loaders_and_seed_are_declared_and_not_implemented(name):
         fn(*([None] if name == "seed_villages" else []))
 
 
+@pytest.mark.skip(reason="V1 declaration test superceded by V2 implementation")
 @pytest.mark.parametrize("folder", FOLDERS)
 def test_folders_exist_with_only_a_placeholder(folder):
     path = ROOT / "data" / folder
     assert (path / ".gitkeep").is_file(), f"data/{folder}/.gitkeep is missing"
     assert not any(p.suffix == ".json" for p in path.iterdir()), f"data/{folder} holds catalogue content"
+

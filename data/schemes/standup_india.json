@@ -1,0 +1,66 @@
+{
+  "id": "standup_india",
+  "name": "Stand-Up India",
+  "covers": "Greenfield enterprises in manufacturing, services or allied activities",
+  "sectors": ["allied", "service", "retail", "manufacturing"],
+  "source_url": "https://www.standupmitra.in/Home/SumiSchemes",
+  "verified_on": "2026-10-11",
+  "rules": [
+    {
+      "field": "eligibility.age",
+      "op": "gte",
+      "value": 18,
+      "message": "Applicant must be 18 or older"
+    },
+    {
+      "field": "eligibility.gender",
+      "op": "in",
+      "value": ["female", "other"],
+      "when": [],
+      "message": "Stand-Up India is reserved for women (or SC/ST — see social_category rule)"
+    },
+    {
+      "field": "eligibility.social_category",
+      "op": "in",
+      "value": ["sc", "st"],
+      "when": [{ "field": "eligibility.gender", "op": "eq", "value": "male" }],
+      "message": "Male applicants must belong to SC or ST category"
+    },
+    {
+      "field": "eligibility.business_status",
+      "op": "eq",
+      "value": "new",
+      "message": "Only greenfield (new) enterprises are eligible"
+    },
+    {
+      "field": "project_cost",
+      "op": "gte",
+      "value": 1000000,
+      "message": "Minimum project cost is ₹10 lakh"
+    },
+    {
+      "field": "project_cost",
+      "op": "lte",
+      "value": 10000000,
+      "message": "Maximum project cost is ₹1 crore"
+    }
+  ],
+  "own_contribution_pct": [
+    { "pct": 10 }
+  ],
+  "loan": {
+    "max": 10000000,
+    "interest_rate": 10.5,
+    "rate_source": "assumption",
+    "max_tenure_months": 84,
+    "moratorium_months": 18,
+    "moratorium_mode": "serviced",
+    "repayment_mode": "emi"
+  },
+  "tiers": [],
+  "subsidy": {
+    "type": "none",
+    "lock_in_months": 0,
+    "rates": []
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "id": "pmegp",
+  "name": "PMEGP (Prime Minister Employment Generation Programme)",
+  "covers": "New manufacturing, service and agri-allied units",
+  "sectors": ["allied", "service", "retail", "manufacturing"],
+  "source_url": "https://www.kviconline.gov.in/pmegpeportal/",
+  "verified_on": "2026-10-11",
+  "rules": [
+    {
+      "field": "eligibility.age",
+      "op": "gte",
+      "value": 18,
+      "message": "Applicant must be 18 or older"
+    },
+    {
+      "field": "eligibility.business_status",
+      "op": "eq",
+      "value": "new",
+      "message": "Only new units are eligible — existing businesses do not qualify"
+    },
+    {
+      "field": "eligibility.prior_subsidy",
+      "op": "eq",
+      "value": false,
+      "message": "No earlier government subsidy for the same unit"
+    },
+    {
+      "field": "project_cost",
+      "op": "lte",
+      "value": 5000000,
+      "when": [{ "field": "sector", "op": "in", "value": ["manufacturing"] }],
+      "message": "Manufacturing projects must be within ₹50 lakh"
+    },
+    {
+      "field": "project_cost",
+      "op": "lte",
+      "value": 2000000,
+      "when": [{ "field": "sector", "op": "in", "value": ["service", "retail"] }],
+      "message": "Service/retail projects must be within ₹20 lakh"
+    },
+    {
+      "field": "eligibility.education",
+      "op": "in",
+      "value": ["8th_pass", "10th_pass", "12th_pass", "graduate"],
+      "when": [{ "field": "project_cost", "op": "gt", "value": 500000 }],
+      "message": "8th pass required for projects above ₹5 lakh"
+    }
+  ],
+  "own_contribution_pct": [
+    {
+      "pct": 5,
+      "when": [{ "field": "special_category", "op": "eq", "value": true }]
+    },
+    { "pct": 10 }
+  ],
+  "loan": {
+    "max": 4750000,
+    "interest_rate": 10.0,
+    "rate_source": "assumption",
+    "max_tenure_months": 84,
+    "moratorium_months": 6,
+    "moratorium_mode": "serviced",
+    "repayment_mode": "emi"
+  },
+  "tiers": [],
+  "subsidy": {
+    "type": "capital_backended",
+    "lock_in_months": 36,
+    "rates": [
+      {
+        "pct": 35,
+        "when": [
+          { "field": "special_category", "op": "eq", "value": true },
+          { "field": "is_rural", "op": "eq", "value": true }
+        ]
+      },
+      {
+        "pct": 25,
+        "when": [
+          { "field": "is_rural", "op": "eq", "value": true }
+        ]
+      },
+      { "pct": 15 }
+    ]
+  }
+}

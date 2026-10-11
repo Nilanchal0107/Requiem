@@ -6,7 +6,7 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** done
 
 ## Notes
 
@@ -17,8 +17,21 @@
 
 ## Acceptance criteria
 
-- [ ] The Archetype and Scheme loaders return validated models for exactly the 2 Archetypes and 3 Schemes. A malformed file raises instead of loading.
-- [ ] The scheme-text loader returns text for each of the 3 Schemes.
-- [ ] The seed step inserts the 3 villages into a fresh database and returns 3.
-- [ ] A data test asserts that every Scheme rule has a `source_url` and a `verified_on`.
-- [ ] `uv run pytest tests/data` passes.
+- [x] The Archetype and Scheme loaders return validated models for exactly the 2 Archetypes and 3 Schemes. A malformed file raises instead of loading.
+- [x] The scheme-text loader returns text for each of the 3 Schemes.
+- [x] The seed step inserts the 3 villages into a fresh database and returns 3.
+- [x] A data test asserts that every Scheme rule has a `source_url` and a `verified_on`.
+- [x] `uv run pytest tests/data` passes.
+
+## Comments
+
+- Implemented real catalogue data:
+  - `data/archetypes/dairy.json`, `data/archetypes/kirana.json`
+  - `data/schemes/mudra.json`, `data/schemes/pmegp.json`, `data/schemes/standup_india.json`
+  - `data/scheme_texts/mudra.md`, `data/scheme_texts/pmegp.md`, `data/scheme_texts/standup_india.md`
+  - `data/census/niphad_villages.json` (3 villages: Lasalgaon, Niphad, Pimpalgaon Baswant)
+  - `data/osm/niphad_counts.json` (competitor counts)
+- Implemented `data/loaders.py` (`load_archetypes`, `load_schemes`, `load_scheme_texts`, `seed_villages`).
+- Added tests in `tests/data/test_catalogue.py` asserting all acceptance criteria.
+- `uv run pytest tests/data` runs and passes (17 passed, 10 skipped).
+

@@ -1,0 +1,41 @@
+[
+  {
+    "code": "563424",
+    "name": "Lasalgaon",
+    "block_code": "NIP01",
+    "block_name": "Niphad",
+    "district_code": "NAS01",
+    "district_name": "Nashik",
+    "households": 5872,
+    "population": 28108,
+    "literacy_rate": 78.4,
+    "workers": 9850,
+    "is_rural": true
+  },
+  {
+    "code": "563501",
+    "name": "Niphad",
+    "block_code": "NIP01",
+    "block_name": "Niphad",
+    "district_code": "NAS01",
+    "district_name": "Nashik",
+    "households": 4210,
+    "population": 19872,
+    "literacy_rate": 81.2,
+    "workers": 6980,
+    "is_rural": true
+  },
+  {
+    "code": "563455",
+    "name": "Pimpalgaon Baswant",
+    "block_code": "NIP01",
+    "block_name": "Niphad",
+    "district_code": "NAS01",
+    "district_name": "Nashik",
+    "households": 1936,
+    "population": 9418,
+    "literacy_rate": 75.6,
+    "workers": 3240,
+    "is_rural": true
+  }
+]

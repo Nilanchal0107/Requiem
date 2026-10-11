@@ -1,0 +1,66 @@
+{
+  "id": "kirana",
+  "name": "Kirana (Grocery shop)",
+  "sector": "retail",
+  "unit_label": "stock value (₹)",
+  "unit_scale": { "default": 50000, "min": 20000, "max": 200000, "step": 10000 },
+  "eligibility_fields": [
+    "age", "gender", "social_category", "education",
+    "business_status", "prior_subsidy"
+  ],
+  "cost_items": [
+    {
+      "id": "shelving",
+      "name": "Shelving and storage",
+      "fixed": 20000,
+      "per_unit": 0,
+      "depreciation_pct": 20,
+      "note": "Basic wooden and metal shelving for a single-room shop, Nashik 2026 assumption"
+    },
+    {
+      "id": "initial_stock",
+      "name": "Initial stock",
+      "fixed": 0,
+      "per_unit": 1,
+      "depreciation_pct": 0,
+      "note": "Stock value equals unit_scale (₹); replenished from revenue"
+    },
+    {
+      "id": "shop_fit",
+      "name": "Shop fit-out (signage, counter)",
+      "fixed": 15000,
+      "per_unit": 0,
+      "depreciation_pct": 20,
+      "note": "One-time fit-out for a 150 sq ft roadside shop, Nashik rural 2026 assumption"
+    }
+  ],
+  "working_capital_months": 1,
+  "revenue": {
+    "unit": "customers",
+    "output_per_unit_per_month": 1,
+    "price": 800,
+    "note": "Average basket ₹800/customer/month; revenue = customers × ₹800; Nashik rural 2026 assumption"
+  },
+  "operating_cost": {
+    "variable_pct_of_revenue": 70,
+    "fixed_monthly": 3000,
+    "note": "COGS ~65%, spoilage ~5%; fixed: rent (if any) and utilities ₹3000/month assumption"
+  },
+  "ramp_up_months": 2,
+  "target_utilisation_pct": 80,
+  "growth_pct_per_year": 8,
+  "market": {
+    "mode": "local",
+    "aggregator": null,
+    "adoption_rate": 0.6,
+    "units_per_customer_per_month": 1,
+    "competitor_osm_tags": ["shop=convenience", "shop=supermarket", "shop=grocery"],
+    "capacity_per_competitor": 80
+  },
+  "channels": [
+    "Walk-in neighbourhood customers",
+    "Home delivery (cycle/bike)",
+    "Village weekly market (haat)"
+  ],
+  "notes": "Retail sector. Local mode: household demand limits sales. adoption_rate 60% of households shop at a kirana monthly. capacity_per_competitor 80 customers/month assumption."
+}
