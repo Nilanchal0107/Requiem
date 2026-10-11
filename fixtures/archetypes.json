@@ -1,0 +1,68 @@
+[
+  {
+    "id": "dairy",
+    "name": "Dairy",
+    "sector": "allied",
+    "unit_label": "animals",
+    "unit_scale_default": 5,
+    "unit_scale_min": 2,
+    "unit_scale_max": 20,
+    "unit_scale_step": 1,
+    "eligibility_fields": ["age", "gender", "social_category", "education", "business_status", "prior_subsidy", "prior_tarun_repaid"]
+  },
+  {
+    "id": "onion_cultivation",
+    "name": "Onion cultivation",
+    "sector": "agriculture",
+    "unit_label": "acres",
+    "unit_scale_default": 2,
+    "unit_scale_min": 0.5,
+    "unit_scale_max": 10,
+    "unit_scale_step": 0.5,
+    "eligibility_fields": ["age", "gender", "social_category", "education", "farmland"]
+  },
+  {
+    "id": "poultry",
+    "name": "Poultry",
+    "sector": "allied",
+    "unit_label": "birds",
+    "unit_scale_default": 500,
+    "unit_scale_min": 100,
+    "unit_scale_max": 5000,
+    "unit_scale_step": 100,
+    "eligibility_fields": ["age", "gender", "social_category", "education", "business_status"]
+  },
+  {
+    "id": "tailoring",
+    "name": "Tailoring",
+    "sector": "service",
+    "unit_label": "machines",
+    "unit_scale_default": 3,
+    "unit_scale_min": 1,
+    "unit_scale_max": 10,
+    "unit_scale_step": 1,
+    "eligibility_fields": ["age", "gender", "social_category", "education", "business_status", "artisan_trade"]
+  },
+  {
+    "id": "kirana",
+    "name": "Kirana shop",
+    "sector": "retail",
+    "unit_label": "stock value (₹)",
+    "unit_scale_default": 200000,
+    "unit_scale_min": 50000,
+    "unit_scale_max": 1000000,
+    "unit_scale_step": 50000,
+    "eligibility_fields": ["age", "gender", "social_category", "education", "business_status", "prior_subsidy"]
+  },
+  {
+    "id": "flour_mill",
+    "name": "Flour mill",
+    "sector": "manufacturing",
+    "unit_label": "capacity (kg/hr)",
+    "unit_scale_default": 100,
+    "unit_scale_min": 50,
+    "unit_scale_max": 500,
+    "unit_scale_step": 50,
+    "eligibility_fields": ["age", "gender", "social_category", "education", "business_status", "prior_subsidy"]
+  }
+]

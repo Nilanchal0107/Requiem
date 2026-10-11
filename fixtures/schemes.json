@@ -1,0 +1,80 @@
+[
+  {
+    "id": "mudra",
+    "name": "MUDRA",
+    "covers": "Non-farm micro enterprises, allied activities",
+    "max_loan": 1000000,
+    "interest_rate_min": 10.0,
+    "interest_rate_max": 12.0,
+    "max_tenure_months": 60,
+    "moratorium_months": 6,
+    "subsidy": null,
+    "source_url": "https://example.invalid/fixtures/mudra",
+    "verified_on": "1970-01-01"
+  },
+  {
+    "id": "pmegp",
+    "name": "PMEGP",
+    "covers": "New manufacturing and service units",
+    "max_loan": 4750000,
+    "interest_rate_min": 10.0,
+    "interest_rate_max": 10.0,
+    "max_tenure_months": 84,
+    "moratorium_months": 6,
+    "subsidy": "15–35% of project cost, back-ended",
+    "source_url": "https://www.kviconline.gov.in/pmegpeportal/",
+    "verified_on": "1970-01-01"
+  },
+  {
+    "id": "standup_india",
+    "name": "Stand-Up India",
+    "covers": "Greenfield non-farm enterprises for SC/ST and women",
+    "max_loan": 10000000,
+    "interest_rate_min": 10.0,
+    "interest_rate_max": 12.0,
+    "max_tenure_months": 84,
+    "moratorium_months": 18,
+    "subsidy": null,
+    "source_url": "https://example.invalid/fixtures/standup-india",
+    "verified_on": "1970-01-01"
+  },
+  {
+    "id": "pm_vishwakarma",
+    "name": "PM Vishwakarma",
+    "covers": "Notified artisan and craft trades",
+    "max_loan": 300000,
+    "interest_rate_min": 5.0,
+    "interest_rate_max": 5.0,
+    "max_tenure_months": 60,
+    "moratorium_months": 6,
+    "subsidy": null,
+    "source_url": "https://example.invalid/fixtures/pm-vishwakarma",
+    "verified_on": "1970-01-01"
+  },
+  {
+    "id": "cmegp",
+    "name": "CMEGP",
+    "covers": "New micro enterprises in Maharashtra",
+    "max_loan": 2500000,
+    "interest_rate_min": 10.0,
+    "interest_rate_max": 12.0,
+    "max_tenure_months": 84,
+    "moratorium_months": 6,
+    "subsidy": "State capital subsidy, back-ended",
+    "source_url": "https://example.invalid/fixtures/cmegp",
+    "verified_on": "1970-01-01"
+  },
+  {
+    "id": "kcc",
+    "name": "Kisan Credit Card",
+    "covers": "Crop cultivation credit",
+    "max_loan": 300000,
+    "interest_rate_min": 7.0,
+    "interest_rate_max": 9.0,
+    "max_tenure_months": 12,
+    "moratorium_months": 0,
+    "subsidy": "Interest subvention for prompt repayment",
+    "source_url": "https://example.invalid/fixtures/kcc",
+    "verified_on": "1970-01-01"
+  }
+]

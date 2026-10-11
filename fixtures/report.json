@@ -1,0 +1,1089 @@
+{
+  "id": "demo-niphad-dairy",
+  "status": "done",
+  "input": {
+    "village_code": "FX1002",
+    "archetype_id": "dairy",
+    "unit_scale": 5.0,
+    "own_contribution": 100000,
+    "eligibility": {
+      "age": 34,
+      "gender": "female",
+      "social_category": "obc",
+      "education": "10th_pass",
+      "business_status": "new",
+      "prior_subsidy": false,
+      "prior_tarun_repaid": false,
+      "artisan_trade": false,
+      "farmland": "none"
+    },
+    "language": "mr",
+    "competitor_override": null,
+    "tenure_months": null
+  },
+  "engine": {
+    "archetype_id": "dairy",
+    "village_code": "FX1002",
+    "market": {
+      "households": {
+        "id": "households",
+        "label": "Households (projected)",
+        "value": 2315,
+        "unit": "households",
+        "source": "computed",
+        "formula": "census_households * (1 + growth)^(current_year - 2011)",
+        "inputs": {
+          "census_households": 1936,
+          "growth_pct": 1.2,
+          "years": 15
+        }
+      },
+      "potential_customers": {
+        "id": "potential_customers",
+        "label": "Potential customers",
+        "value": 0,
+        "unit": "count",
+        "source": "computed",
+        "note": "Not used in aggregator mode"
+      },
+      "demand": {
+        "id": "demand",
+        "label": "Demand per month",
+        "value": 0,
+        "unit": "count",
+        "source": "computed",
+        "note": "Not used in aggregator mode"
+      },
+      "competitors": {
+        "id": "competitors",
+        "label": "Competitors nearby",
+        "value": 0,
+        "unit": "count",
+        "source": "osm",
+        "note": "No competitor tags for dairy; OSM coverage is low in rural areas"
+      },
+      "competitor_capacity": {
+        "id": "competitor_capacity",
+        "label": "Competitor capacity",
+        "value": 0,
+        "unit": "count",
+        "source": "computed"
+      },
+      "market_gap": {
+        "id": "market_gap",
+        "label": "Market Gap",
+        "value": 0,
+        "unit": "count",
+        "source": "computed",
+        "note": "Aggregator mode: replaced by 'aggregator within reach'"
+      },
+      "competitor_coverage": "low",
+      "channels": [
+        "Cooperative collection centre",
+        "Direct to households",
+        "Sweet shops"
+      ]
+    },
+    "cost": {
+      "items": [
+        {
+          "name": "Buffaloes",
+          "figure": {
+            "id": "cost.animals",
+            "label": "Buffaloes",
+            "value": 350000,
+            "unit": "INR",
+            "source": "assumption",
+            "formula": "fixed + per_unit * unit_scale",
+            "inputs": {
+              "fixed": 0,
+              "per_unit": 70000,
+              "unit_scale": 5
+            }
+          }
+        },
+        {
+          "name": "Cattle shed",
+          "figure": {
+            "id": "cost.shed",
+            "label": "Cattle shed",
+            "value": 110000,
+            "unit": "INR",
+            "source": "assumption",
+            "formula": "fixed + per_unit * unit_scale",
+            "inputs": {
+              "fixed": 60000,
+              "per_unit": 10000,
+              "unit_scale": 5
+            }
+          }
+        }
+      ],
+      "project_cost": {
+        "id": "project_cost",
+        "label": "Project Cost",
+        "value": 517460,
+        "unit": "INR",
+        "source": "computed",
+        "formula": "sum of cost items + working_capital",
+        "inputs": {
+          "cost.animals": 350000,
+          "cost.shed": 110000,
+          "working_capital": 57460
+        }
+      }
+    },
+    "finance": {
+      "own_contribution": {
+        "id": "own_contribution",
+        "label": "Own Contribution",
+        "value": 100000,
+        "unit": "INR",
+        "source": "user"
+      },
+      "loan": {
+        "id": "loan",
+        "label": "Loan",
+        "value": 417460,
+        "unit": "INR",
+        "source": "computed",
+        "formula": "funding_gap (within MUDRA Kishore maximum)",
+        "inputs": {
+          "funding_gap": 417460
+        }
+      },
+      "subsidy": {
+        "id": "subsidy",
+        "label": "Subsidy",
+        "value": 0,
+        "unit": "INR",
+        "source": "scheme",
+        "note": "MUDRA has no capital subsidy"
+      },
+      "subsidy_backended": false,
+      "funding_gap": {
+        "id": "funding_gap",
+        "label": "Funding Gap",
+        "value": 417460,
+        "unit": "INR",
+        "source": "computed",
+        "formula": "project_cost - own_contribution",
+        "inputs": {
+          "project_cost": 517460,
+          "own_contribution": 100000
+        }
+      }
+    },
+    "schemes": {
+      "best": {
+        "scheme_id": "mudra",
+        "name": "MUDRA",
+        "tier": "kishore",
+        "terms": {
+          "principal": 417460,
+          "interest_rate": 10.0,
+          "tenure_months": 60,
+          "moratorium_months": 6,
+          "moratorium_mode": "serviced",
+          "emi": 9632,
+          "total_interest": 123530
+        },
+        "effective_rate": 10.0,
+        "reasons": [
+          "Allied activities are covered",
+          "Funding Gap fits the Kishore tier"
+        ],
+        "source_url": "https://example.invalid/fixtures/mudra"
+      },
+      "alternatives": [],
+      "ineligible": []
+    },
+    "repayment": [
+      {
+        "month": 1,
+        "opening": 417460,
+        "interest": 3479,
+        "principal": 0,
+        "payment": 3479,
+        "closing": 417460
+      },
+      {
+        "month": 2,
+        "opening": 417460,
+        "interest": 3479,
+        "principal": 0,
+        "payment": 3479,
+        "closing": 417460
+      },
+      {
+        "month": 3,
+        "opening": 417460,
+        "interest": 3479,
+        "principal": 0,
+        "payment": 3479,
+        "closing": 417460
+      },
+      {
+        "month": 4,
+        "opening": 417460,
+        "interest": 3479,
+        "principal": 0,
+        "payment": 3479,
+        "closing": 417460
+      },
+      {
+        "month": 5,
+        "opening": 417460,
+        "interest": 3479,
+        "principal": 0,
+        "payment": 3479,
+        "closing": 417460
+      },
+      {
+        "month": 6,
+        "opening": 417460,
+        "interest": 3479,
+        "principal": 0,
+        "payment": 3479,
+        "closing": 417460
+      },
+      {
+        "month": 7,
+        "opening": 417460,
+        "interest": 3479,
+        "principal": 6153,
+        "payment": 9632,
+        "closing": 411307
+      },
+      {
+        "month": 8,
+        "opening": 411307,
+        "interest": 3428,
+        "principal": 6204,
+        "payment": 9632,
+        "closing": 405103
+      },
+      {
+        "month": 9,
+        "opening": 405103,
+        "interest": 3376,
+        "principal": 6256,
+        "payment": 9632,
+        "closing": 398847
+      },
+      {
+        "month": 10,
+        "opening": 398847,
+        "interest": 3324,
+        "principal": 6308,
+        "payment": 9632,
+        "closing": 392539
+      },
+      {
+        "month": 11,
+        "opening": 392539,
+        "interest": 3271,
+        "principal": 6361,
+        "payment": 9632,
+        "closing": 386178
+      },
+      {
+        "month": 12,
+        "opening": 386178,
+        "interest": 3218,
+        "principal": 6414,
+        "payment": 9632,
+        "closing": 379764
+      },
+      {
+        "month": 13,
+        "opening": 379764,
+        "interest": 3165,
+        "principal": 6467,
+        "payment": 9632,
+        "closing": 373297
+      },
+      {
+        "month": 14,
+        "opening": 373297,
+        "interest": 3111,
+        "principal": 6521,
+        "payment": 9632,
+        "closing": 366776
+      },
+      {
+        "month": 15,
+        "opening": 366776,
+        "interest": 3056,
+        "principal": 6576,
+        "payment": 9632,
+        "closing": 360200
+      },
+      {
+        "month": 16,
+        "opening": 360200,
+        "interest": 3002,
+        "principal": 6630,
+        "payment": 9632,
+        "closing": 353570
+      },
+      {
+        "month": 17,
+        "opening": 353570,
+        "interest": 2946,
+        "principal": 6686,
+        "payment": 9632,
+        "closing": 346884
+      },
+      {
+        "month": 18,
+        "opening": 346884,
+        "interest": 2891,
+        "principal": 6741,
+        "payment": 9632,
+        "closing": 340143
+      },
+      {
+        "month": 19,
+        "opening": 340143,
+        "interest": 2835,
+        "principal": 6797,
+        "payment": 9632,
+        "closing": 333346
+      },
+      {
+        "month": 20,
+        "opening": 333346,
+        "interest": 2778,
+        "principal": 6854,
+        "payment": 9632,
+        "closing": 326492
+      },
+      {
+        "month": 21,
+        "opening": 326492,
+        "interest": 2721,
+        "principal": 6911,
+        "payment": 9632,
+        "closing": 319581
+      },
+      {
+        "month": 22,
+        "opening": 319581,
+        "interest": 2663,
+        "principal": 6969,
+        "payment": 9632,
+        "closing": 312612
+      },
+      {
+        "month": 23,
+        "opening": 312612,
+        "interest": 2605,
+        "principal": 7027,
+        "payment": 9632,
+        "closing": 305585
+      },
+      {
+        "month": 24,
+        "opening": 305585,
+        "interest": 2547,
+        "principal": 7085,
+        "payment": 9632,
+        "closing": 298500
+      },
+      {
+        "month": 25,
+        "opening": 298500,
+        "interest": 2488,
+        "principal": 7144,
+        "payment": 9632,
+        "closing": 291356
+      },
+      {
+        "month": 26,
+        "opening": 291356,
+        "interest": 2428,
+        "principal": 7204,
+        "payment": 9632,
+        "closing": 284152
+      },
+      {
+        "month": 27,
+        "opening": 284152,
+        "interest": 2368,
+        "principal": 7264,
+        "payment": 9632,
+        "closing": 276888
+      },
+      {
+        "month": 28,
+        "opening": 276888,
+        "interest": 2307,
+        "principal": 7325,
+        "payment": 9632,
+        "closing": 269563
+      },
+      {
+        "month": 29,
+        "opening": 269563,
+        "interest": 2246,
+        "principal": 7386,
+        "payment": 9632,
+        "closing": 262177
+      },
+      {
+        "month": 30,
+        "opening": 262177,
+        "interest": 2185,
+        "principal": 7447,
+        "payment": 9632,
+        "closing": 254730
+      },
+      {
+        "month": 31,
+        "opening": 254730,
+        "interest": 2123,
+        "principal": 7509,
+        "payment": 9632,
+        "closing": 247221
+      },
+      {
+        "month": 32,
+        "opening": 247221,
+        "interest": 2060,
+        "principal": 7572,
+        "payment": 9632,
+        "closing": 239649
+      },
+      {
+        "month": 33,
+        "opening": 239649,
+        "interest": 1997,
+        "principal": 7635,
+        "payment": 9632,
+        "closing": 232014
+      },
+      {
+        "month": 34,
+        "opening": 232014,
+        "interest": 1933,
+        "principal": 7699,
+        "payment": 9632,
+        "closing": 224315
+      },
+      {
+        "month": 35,
+        "opening": 224315,
+        "interest": 1869,
+        "principal": 7763,
+        "payment": 9632,
+        "closing": 216552
+      },
+      {
+        "month": 36,
+        "opening": 216552,
+        "interest": 1805,
+        "principal": 7827,
+        "payment": 9632,
+        "closing": 208725
+      },
+      {
+        "month": 37,
+        "opening": 208725,
+        "interest": 1739,
+        "principal": 7893,
+        "payment": 9632,
+        "closing": 200832
+      },
+      {
+        "month": 38,
+        "opening": 200832,
+        "interest": 1674,
+        "principal": 7958,
+        "payment": 9632,
+        "closing": 192874
+      },
+      {
+        "month": 39,
+        "opening": 192874,
+        "interest": 1607,
+        "principal": 8025,
+        "payment": 9632,
+        "closing": 184849
+      },
+      {
+        "month": 40,
+        "opening": 184849,
+        "interest": 1540,
+        "principal": 8092,
+        "payment": 9632,
+        "closing": 176757
+      },
+      {
+        "month": 41,
+        "opening": 176757,
+        "interest": 1473,
+        "principal": 8159,
+        "payment": 9632,
+        "closing": 168598
+      },
+      {
+        "month": 42,
+        "opening": 168598,
+        "interest": 1405,
+        "principal": 8227,
+        "payment": 9632,
+        "closing": 160371
+      },
+      {
+        "month": 43,
+        "opening": 160371,
+        "interest": 1336,
+        "principal": 8296,
+        "payment": 9632,
+        "closing": 152075
+      },
+      {
+        "month": 44,
+        "opening": 152075,
+        "interest": 1267,
+        "principal": 8365,
+        "payment": 9632,
+        "closing": 143710
+      },
+      {
+        "month": 45,
+        "opening": 143710,
+        "interest": 1198,
+        "principal": 8434,
+        "payment": 9632,
+        "closing": 135276
+      },
+      {
+        "month": 46,
+        "opening": 135276,
+        "interest": 1127,
+        "principal": 8505,
+        "payment": 9632,
+        "closing": 126771
+      },
+      {
+        "month": 47,
+        "opening": 126771,
+        "interest": 1056,
+        "principal": 8576,
+        "payment": 9632,
+        "closing": 118195
+      },
+      {
+        "month": 48,
+        "opening": 118195,
+        "interest": 985,
+        "principal": 8647,
+        "payment": 9632,
+        "closing": 109548
+      },
+      {
+        "month": 49,
+        "opening": 109548,
+        "interest": 913,
+        "principal": 8719,
+        "payment": 9632,
+        "closing": 100829
+      },
+      {
+        "month": 50,
+        "opening": 100829,
+        "interest": 840,
+        "principal": 8792,
+        "payment": 9632,
+        "closing": 92037
+      },
+      {
+        "month": 51,
+        "opening": 92037,
+        "interest": 767,
+        "principal": 8865,
+        "payment": 9632,
+        "closing": 83172
+      },
+      {
+        "month": 52,
+        "opening": 83172,
+        "interest": 693,
+        "principal": 8939,
+        "payment": 9632,
+        "closing": 74233
+      },
+      {
+        "month": 53,
+        "opening": 74233,
+        "interest": 619,
+        "principal": 9013,
+        "payment": 9632,
+        "closing": 65220
+      },
+      {
+        "month": 54,
+        "opening": 65220,
+        "interest": 544,
+        "principal": 9088,
+        "payment": 9632,
+        "closing": 56132
+      },
+      {
+        "month": 55,
+        "opening": 56132,
+        "interest": 468,
+        "principal": 9164,
+        "payment": 9632,
+        "closing": 46968
+      },
+      {
+        "month": 56,
+        "opening": 46968,
+        "interest": 391,
+        "principal": 9241,
+        "payment": 9632,
+        "closing": 37727
+      },
+      {
+        "month": 57,
+        "opening": 37727,
+        "interest": 314,
+        "principal": 9318,
+        "payment": 9632,
+        "closing": 28409
+      },
+      {
+        "month": 58,
+        "opening": 28409,
+        "interest": 237,
+        "principal": 9395,
+        "payment": 9632,
+        "closing": 19014
+      },
+      {
+        "month": 59,
+        "opening": 19014,
+        "interest": 158,
+        "principal": 9474,
+        "payment": 9632,
+        "closing": 9540
+      },
+      {
+        "month": 60,
+        "opening": 9540,
+        "interest": 80,
+        "principal": 9540,
+        "payment": 9620,
+        "closing": 0
+      }
+    ],
+    "projections": [
+      {
+        "year": 1,
+        "revenue": 534600,
+        "operating_cost": 318030,
+        "depreciation": 11000,
+        "interest": 40970,
+        "net_profit": 164600,
+        "cash_flow": 137904,
+        "debt_service": 78666,
+        "dscr": 2.75
+      },
+      {
+        "year": 2,
+        "revenue": 583200,
+        "operating_cost": 344760,
+        "depreciation": 11000,
+        "interest": 34320,
+        "net_profit": 193120,
+        "cash_flow": 122856,
+        "debt_service": 115584,
+        "dscr": 2.06
+      },
+      {
+        "year": 3,
+        "revenue": 583200,
+        "operating_cost": 344760,
+        "depreciation": 11000,
+        "interest": 25809,
+        "net_profit": 201631,
+        "cash_flow": 122856,
+        "debt_service": 115584,
+        "dscr": 2.06
+      },
+      {
+        "year": 4,
+        "revenue": 583200,
+        "operating_cost": 344760,
+        "depreciation": 11000,
+        "interest": 16407,
+        "net_profit": 211033,
+        "cash_flow": 122856,
+        "debt_service": 115584,
+        "dscr": 2.06
+      },
+      {
+        "year": 5,
+        "revenue": 583200,
+        "operating_cost": 344760,
+        "depreciation": 11000,
+        "interest": 6024,
+        "net_profit": 221416,
+        "cash_flow": 122868,
+        "debt_service": 115572,
+        "dscr": 2.06
+      }
+    ],
+    "break_even_month": {
+      "id": "break_even_month",
+      "label": "Break-even month",
+      "value": 1,
+      "unit": "months",
+      "source": "computed",
+      "formula": "first month where revenue - operating cost - payment >= 0"
+    },
+    "payback_months": {
+      "id": "payback_months",
+      "label": "Payback",
+      "value": 28,
+      "unit": "months",
+      "source": "computed",
+      "formula": "first month where cumulative (revenue - operating cost) >= project_cost"
+    },
+    "min_dscr": {
+      "id": "min_dscr",
+      "label": "Lowest DSCR",
+      "value": 2.06,
+      "unit": "ratio",
+      "source": "computed",
+      "formula": "min over years of (net_profit + depreciation + interest) / debt_service"
+    },
+    "verdict": {
+      "level": "feasible",
+      "signals": [
+        {
+          "name": "dscr",
+          "level": "feasible",
+          "figure_id": "min_dscr"
+        },
+        {
+          "name": "payback",
+          "level": "feasible",
+          "figure_id": "payback_months"
+        },
+        {
+          "name": "scheme",
+          "level": "feasible",
+          "figure_id": null
+        }
+      ]
+    },
+    "path_to_yes": null,
+    "figures": {
+      "households": {
+        "id": "households",
+        "label": "Households (projected)",
+        "value": 2315,
+        "unit": "households",
+        "source": "computed",
+        "formula": "census_households * (1 + growth)^(current_year - 2011)",
+        "inputs": {
+          "census_households": 1936,
+          "growth_pct": 1.2,
+          "years": 15
+        }
+      },
+      "potential_customers": {
+        "id": "potential_customers",
+        "label": "Potential customers",
+        "value": 0,
+        "unit": "count",
+        "source": "computed",
+        "note": "Not used in aggregator mode"
+      },
+      "demand": {
+        "id": "demand",
+        "label": "Demand per month",
+        "value": 0,
+        "unit": "count",
+        "source": "computed",
+        "note": "Not used in aggregator mode"
+      },
+      "competitors": {
+        "id": "competitors",
+        "label": "Competitors nearby",
+        "value": 0,
+        "unit": "count",
+        "source": "osm",
+        "note": "No competitor tags for dairy; OSM coverage is low in rural areas"
+      },
+      "competitor_capacity": {
+        "id": "competitor_capacity",
+        "label": "Competitor capacity",
+        "value": 0,
+        "unit": "count",
+        "source": "computed"
+      },
+      "market_gap": {
+        "id": "market_gap",
+        "label": "Market Gap",
+        "value": 0,
+        "unit": "count",
+        "source": "computed",
+        "note": "Aggregator mode: replaced by 'aggregator within reach'"
+      },
+      "our_capacity": {
+        "id": "our_capacity",
+        "label": "Our capacity (litres per month)",
+        "value": 1200,
+        "unit": "count",
+        "source": "computed",
+        "formula": "unit_scale * output_per_unit_per_month",
+        "inputs": {
+          "unit_scale": 5,
+          "output_per_unit_per_month": 240
+        }
+      },
+      "cost.animals": {
+        "id": "cost.animals",
+        "label": "Buffaloes",
+        "value": 350000,
+        "unit": "INR",
+        "source": "assumption",
+        "formula": "fixed + per_unit * unit_scale",
+        "inputs": {
+          "fixed": 0,
+          "per_unit": 70000,
+          "unit_scale": 5
+        }
+      },
+      "cost.shed": {
+        "id": "cost.shed",
+        "label": "Cattle shed",
+        "value": 110000,
+        "unit": "INR",
+        "source": "assumption",
+        "formula": "fixed + per_unit * unit_scale",
+        "inputs": {
+          "fixed": 60000,
+          "per_unit": 10000,
+          "unit_scale": 5
+        }
+      },
+      "project_cost": {
+        "id": "project_cost",
+        "label": "Project Cost",
+        "value": 517460,
+        "unit": "INR",
+        "source": "computed",
+        "formula": "sum of cost items + working_capital",
+        "inputs": {
+          "cost.animals": 350000,
+          "cost.shed": 110000,
+          "working_capital": 57460
+        }
+      },
+      "working_capital": {
+        "id": "working_capital",
+        "label": "Working capital",
+        "value": 57460,
+        "unit": "INR",
+        "source": "computed",
+        "formula": "working_capital_months * monthly operating cost at target utilisation",
+        "inputs": {
+          "working_capital_months": 2,
+          "monthly_operating_cost": 28730
+        }
+      },
+      "own_contribution": {
+        "id": "own_contribution",
+        "label": "Own Contribution",
+        "value": 100000,
+        "unit": "INR",
+        "source": "user"
+      },
+      "funding_gap": {
+        "id": "funding_gap",
+        "label": "Funding Gap",
+        "value": 417460,
+        "unit": "INR",
+        "source": "computed",
+        "formula": "project_cost - own_contribution",
+        "inputs": {
+          "project_cost": 517460,
+          "own_contribution": 100000
+        }
+      },
+      "loan": {
+        "id": "loan",
+        "label": "Loan",
+        "value": 417460,
+        "unit": "INR",
+        "source": "computed",
+        "formula": "funding_gap (within MUDRA Kishore maximum)",
+        "inputs": {
+          "funding_gap": 417460
+        }
+      },
+      "subsidy": {
+        "id": "subsidy",
+        "label": "Subsidy",
+        "value": 0,
+        "unit": "INR",
+        "source": "scheme",
+        "note": "MUDRA has no capital subsidy"
+      },
+      "interest_rate": {
+        "id": "interest_rate",
+        "label": "Interest rate",
+        "value": 10.0,
+        "unit": "%",
+        "source": "assumption",
+        "note": "Typical bank rate; the bank sets the actual rate"
+      },
+      "tenure_months": {
+        "id": "tenure_months",
+        "label": "Tenure",
+        "value": 60,
+        "unit": "months",
+        "source": "scheme"
+      },
+      "moratorium_months": {
+        "id": "moratorium_months",
+        "label": "Moratorium",
+        "value": 6,
+        "unit": "months",
+        "source": "scheme"
+      },
+      "emi": {
+        "id": "emi",
+        "label": "EMI",
+        "value": 9632,
+        "unit": "INR",
+        "source": "computed",
+        "formula": "P * r * (1+r)^n / ((1+r)^n - 1), n = tenure - moratorium",
+        "inputs": {
+          "principal": 417460,
+          "annual_rate": 10.0,
+          "n": 54
+        }
+      },
+      "total_interest": {
+        "id": "total_interest",
+        "label": "Total interest",
+        "value": 123530,
+        "unit": "INR",
+        "source": "computed",
+        "formula": "sum of interest over all repayment rows"
+      },
+      "year1_revenue": {
+        "id": "year1_revenue",
+        "label": "Revenue, year 1",
+        "value": 534600,
+        "unit": "INR",
+        "source": "computed",
+        "formula": "sum of monthly revenue, months 1-12"
+      },
+      "year1_net_profit": {
+        "id": "year1_net_profit",
+        "label": "Net profit, year 1",
+        "value": 164600,
+        "unit": "INR",
+        "source": "computed",
+        "formula": "revenue - operating cost - depreciation - interest"
+      },
+      "monthly_profit": {
+        "id": "monthly_profit",
+        "label": "Monthly profit at full utilisation",
+        "value": 19870,
+        "unit": "INR",
+        "source": "computed",
+        "formula": "revenue - operating cost at target utilisation"
+      },
+      "break_even_month": {
+        "id": "break_even_month",
+        "label": "Break-even month",
+        "value": 1,
+        "unit": "months",
+        "source": "computed",
+        "formula": "first month where revenue - operating cost - payment >= 0"
+      },
+      "payback_months": {
+        "id": "payback_months",
+        "label": "Payback",
+        "value": 28,
+        "unit": "months",
+        "source": "computed",
+        "formula": "first month where cumulative (revenue - operating cost) >= project_cost"
+      },
+      "min_dscr": {
+        "id": "min_dscr",
+        "label": "Lowest DSCR",
+        "value": 2.06,
+        "unit": "ratio",
+        "source": "computed",
+        "formula": "min over years of (net_profit + depreciation + interest) / debt_service"
+      }
+    }
+  },
+  "explanation": {
+    "language": "mr",
+    "sections": [
+      {
+        "key": "verdict",
+        "title": "निर्णय",
+        "text": "हा डेअरी व्यवसाय चालू शकतो. एकूण खर्च {{project_cost}} आहे. तुमचे स्वतःचे योगदान {{own_contribution}} आहे, त्यामुळे {{funding_gap}} कर्ज लागेल. हे कर्ज मुद्रा योजनेच्या किशोर गटात बसते."
+      },
+      {
+        "key": "market",
+        "title": "बाजारपेठ",
+        "text": "या गावात {{households}} कुटुंबे आहेत. तुम्ही सहकारी दूध संकलन केंद्राला विकाल, त्यामुळे गावातील मागणी मर्यादा नाही. तुमची क्षमता दर महिना {{our_capacity}} लिटर आहे."
+      },
+      {
+        "key": "pricing",
+        "title": "उत्पन्न आणि नफा",
+        "text": "पहिल्या वर्षी एकूण विक्री {{year1_revenue}} होईल आणि निव्वळ नफा {{year1_net_profit}} होईल. पूर्ण क्षमतेवर महिन्याला साधारण {{monthly_profit}} नफा मिळेल."
+      },
+      {
+        "key": "risks",
+        "title": "धोके",
+        "text": "दुधाचा दर कमी झाला किंवा जनावरे आजारी पडली, तर उत्पन्न कमी होऊ शकते. तरीही सर्वात कमी कर्ज-सेवा गुणोत्तर {{min_dscr}} आहे, जे सुरक्षित मानले जाते. नफा {{break_even_month}} व्या महिन्यापासून सुरू होतो."
+      },
+      {
+        "key": "path_to_yes",
+        "title": "बदलाची गरज",
+        "text": "सध्याच्या आकड्यांत बदल करण्याची गरज नाही. गुंतवलेली रक्कम {{payback_months}} महिन्यांत परत मिळेल."
+      },
+      {
+        "key": "next_steps",
+        "title": "पुढील पाऊल",
+        "text": "जवळच्या बँकेत मुद्रा कर्जाचा अर्ज द्या. दर महिना {{emi}} हप्ता भरण्याची तयारी ठेवा. कर्ज {{tenure_months}} महिन्यांत फेडायचे आहे."
+      }
+    ],
+    "swot": {
+      "strengths": [
+        "दूध संकलन केंद्राची खात्रीची विक्री",
+        "पूर्ण क्षमता दर महिना {{our_capacity}} लिटर"
+      ],
+      "weaknesses": [
+        "सुरुवातीचा खर्च जास्त आहे"
+      ],
+      "opportunities": [
+        "गावातील कुटुंबांना दूध थेट विकता येईल"
+      ],
+      "threats": [
+        "दुधाचा दर कमी झाल्यास परतफेड कठीण होईल",
+        "कर्ज-सेवा गुणोत्तर {{min_dscr}} पेक्षा खाली गेले तर धोका वाढतो"
+      ]
+    },
+    "verified": 15,
+    "total": 15,
+    "regenerated": false,
+    "available": true
+  },
+  "created_at": "2026-10-11T09:00:00+05:30",
+  "owner_id": null
+}

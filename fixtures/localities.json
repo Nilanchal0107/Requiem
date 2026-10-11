@@ -1,0 +1,13 @@
+{
+  "districts": [
+    { "code": "FX-NASHIK", "name": "Nashik" }
+  ],
+  "blocks": [
+    { "code": "FX-NIPHAD", "name": "Niphad", "district_code": "FX-NASHIK" }
+  ],
+  "villages": [
+    { "code": "FX1001", "name": "Lasalgaon", "block_code": "FX-NIPHAD", "households": 4812, "population": 21050, "is_rural": false },
+    { "code": "FX1002", "name": "Pimpalgaon Baswant", "block_code": "FX-NIPHAD", "households": 1936, "population": 8410, "is_rural": true },
+    { "code": "FX1003", "name": "Ojhar", "block_code": "FX-NIPHAD", "households": 2240, "population": 9725, "is_rural": true }
+  ]
+}

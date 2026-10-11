@@ -1,0 +1,14 @@
+[
+  { "stage": "intake", "status": "running", "duration_ms": null, "sources": [], "message": "Reading your inputs" },
+  { "stage": "intake", "status": "done", "duration_ms": 12, "sources": ["User-entered"], "message": null },
+  { "stage": "market", "status": "running", "duration_ms": null, "sources": [], "message": "Checking the Locality" },
+  { "stage": "market", "status": "done", "duration_ms": 180, "sources": ["Census 2011", "OpenStreetMap", "archetypes.json (assumptions)"], "message": null },
+  { "stage": "cost", "status": "running", "duration_ms": null, "sources": [], "message": "Working out the Project Cost" },
+  { "stage": "cost", "status": "done", "duration_ms": 40, "sources": ["archetypes.json (assumptions)"], "message": null },
+  { "stage": "schemes", "status": "running", "duration_ms": null, "sources": [], "message": "Matching Schemes" },
+  { "stage": "schemes", "status": "done", "duration_ms": 25, "sources": ["schemes.json (verified 1970-01-01, fixture)"], "message": null },
+  { "stage": "dpr", "status": "running", "duration_ms": null, "sources": [], "message": "Building the DPR" },
+  { "stage": "dpr", "status": "done", "duration_ms": 310, "sources": ["Calculation engine"], "message": null },
+  { "stage": "explanation", "status": "running", "duration_ms": null, "sources": [], "message": "Writing your explanation" },
+  { "stage": "explanation", "status": "done", "duration_ms": 2400, "sources": ["LLM explanation (fixture)"], "message": null }
+]
