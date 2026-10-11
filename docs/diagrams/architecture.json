@@ -1,0 +1,241 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Requiem System Architecture",
+    "output": "architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "entrepreneur",
+      "type": "external",
+      "label": "Entrepreneur",
+      "sublabel": "budget Android, 360 px",
+      "pos": [
+        40,
+        220
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "web/",
+      "sublabel": "React + Vite :5173",
+      "tag": "en / hi / mr",
+      "pos": [
+        250,
+        220
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "api/",
+      "sublabel": "FastAPI :8000",
+      "tag": "auth, SSE, persistence",
+      "pos": [
+        470,
+        220
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "engine",
+      "type": "backend",
+      "label": "engine/",
+      "sublabel": "pure Python",
+      "tag": "all numbers",
+      "pos": [
+        700,
+        60
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "llm",
+      "type": "backend",
+      "label": "llm/",
+      "sublabel": "explain, verify, chat",
+      "tag": "no digits",
+      "pos": [
+        700,
+        220
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "data",
+      "type": "backend",
+      "label": "data/",
+      "sublabel": "catalog loaders + JSON",
+      "pos": [
+        700,
+        380
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "SQLite",
+      "sublabel": "user, report, village",
+      "pos": [
+        250,
+        380
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "provider",
+      "type": "cloud",
+      "label": "Gemini / Groq",
+      "sublabel": "OpenAI-compatible",
+      "pos": [
+        930,
+        220
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "cache",
+      "type": "database",
+      "label": "llm_cache/",
+      "sublabel": "live | record | replay",
+      "pos": [
+        930,
+        380
+      ],
+      "size": [
+        140,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Python process (uvicorn)",
+      "wraps": [
+        "api",
+        "engine",
+        "llm",
+        "data"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "e-web",
+      "from": "entrepreneur",
+      "to": "web",
+      "label": "uses",
+      "variant": "emphasis"
+    },
+    {
+      "id": "web-api",
+      "from": "web",
+      "to": "api",
+      "label": "/api via proxy",
+      "variant": "emphasis"
+    },
+    {
+      "id": "api-engine",
+      "from": "api",
+      "to": "engine",
+      "label": "run_engine",
+      "fromSide": "top",
+      "toSide": "left"
+    },
+    {
+      "id": "api-llm",
+      "from": "api",
+      "to": "llm",
+      "label": "explain, chat",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "api-data",
+      "from": "api",
+      "to": "data",
+      "label": "catalog",
+      "fromSide": "bottom",
+      "toSide": "left"
+    },
+    {
+      "id": "api-db",
+      "from": "api",
+      "to": "db",
+      "label": "SQLModel",
+      "fromSide": "bottom",
+      "toSide": "right"
+    },
+    {
+      "id": "llm-provider",
+      "from": "llm",
+      "to": "provider",
+      "label": "HTTPS, fallback"
+    },
+    {
+      "id": "llm-cache",
+      "from": "llm",
+      "to": "cache",
+      "label": "hash lookup",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Boundaries",
+      "items": [
+        "Only api/ touches the DB",
+        "Only llm/ talks to LLM providers",
+        "engine/ does no I/O"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Trust rule",
+      "items": [
+        "Code computes, the LLM explains",
+        "LLM text carries {{figure_id}} placeholders only"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Offline demo",
+      "items": [
+        "LLM_MODE=replay serves recorded responses",
+        "Everything else is local"
+      ]
+    }
+  ]
+}

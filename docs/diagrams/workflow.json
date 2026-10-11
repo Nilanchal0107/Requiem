@@ -1,0 +1,192 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Requiem DPR Build Workflow",
+    "output": "workflow.html",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    {
+      "id": "web",
+      "label": "Browser (web/)"
+    },
+    {
+      "id": "api",
+      "label": "API (api/)"
+    },
+    {
+      "id": "engine",
+      "label": "Engine + LLM (engine/, llm/)"
+    },
+    {
+      "id": "fail",
+      "label": "Failure handling",
+      "variant": "exception"
+    }
+  ],
+  "mainPath": [
+    "form",
+    "create",
+    "stream",
+    "calc",
+    "explain",
+    "verify",
+    "save",
+    "report"
+  ],
+  "nodes": [
+    {
+      "id": "form",
+      "lane": "web",
+      "col": 0,
+      "type": "frontend",
+      "label": "Intake",
+      "sublabel": "Locality + Archetype",
+      "width": 140
+    },
+    {
+      "id": "create",
+      "lane": "api",
+      "col": 1,
+      "type": "backend",
+      "label": "Create report",
+      "sublabel": "status = pending",
+      "width": 140
+    },
+    {
+      "id": "stream",
+      "lane": "api",
+      "col": 2,
+      "type": "backend",
+      "label": "SSE stream",
+      "sublabel": "status = running",
+      "width": 140
+    },
+    {
+      "id": "calc",
+      "lane": "engine",
+      "col": 3,
+      "type": "backend",
+      "label": "run_engine",
+      "sublabel": "market, cost, Schemes, Verdict",
+      "tag": "all numbers",
+      "width": 140
+    },
+    {
+      "id": "explain",
+      "lane": "engine",
+      "col": 4,
+      "type": "cloud",
+      "label": "Explain",
+      "sublabel": "text with placeholders",
+      "width": 140
+    },
+    {
+      "id": "verify",
+      "lane": "engine",
+      "col": 5,
+      "type": "security",
+      "label": "Verifier",
+      "sublabel": "no raw digits",
+      "width": 140
+    },
+    {
+      "id": "save",
+      "lane": "api",
+      "col": 5,
+      "type": "database",
+      "label": "Save report",
+      "sublabel": "status = done",
+      "width": 140
+    },
+    {
+      "id": "report",
+      "lane": "web",
+      "col": 5,
+      "type": "frontend",
+      "label": "Report page",
+      "sublabel": "figures fill placeholders",
+      "width": 140
+    },
+    {
+      "id": "fallback",
+      "lane": "fail",
+      "col": 4,
+      "type": "messagebus",
+      "label": "Fallback",
+      "sublabel": "Groq, then cache replay",
+      "width": 140
+    },
+    {
+      "id": "regen",
+      "lane": "fail",
+      "col": 5,
+      "type": "security",
+      "label": "Regenerate once",
+      "sublabel": "else drop sentence",
+      "width": 140
+    }
+  ],
+  "edges": [
+    {
+      "id": "submit",
+      "from": "form",
+      "to": "create",
+      "label": "POST",
+      "variant": "emphasis"
+    },
+    {
+      "id": "open-stream",
+      "from": "create",
+      "to": "stream",
+      "label": "report_id"
+    },
+    {
+      "id": "run-calc",
+      "from": "stream",
+      "to": "calc"
+    },
+    {
+      "id": "to-explain",
+      "from": "calc",
+      "to": "explain",
+      "label": "EngineResult"
+    },
+    {
+      "id": "to-verify",
+      "from": "explain",
+      "to": "verify"
+    },
+    {
+      "id": "verified",
+      "from": "verify",
+      "to": "save",
+      "label": "verified",
+      "variant": "emphasis"
+    },
+    {
+      "id": "show",
+      "from": "save",
+      "to": "report",
+      "label": "done",
+      "variant": "emphasis"
+    },
+    {
+      "id": "llm-error",
+      "from": "explain",
+      "to": "fallback",
+      "label": "error",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "raw-digits",
+      "from": "verify",
+      "to": "regen",
+      "label": "raw digits",
+      "variant": "security",
+      "role": "error"
+    }
+  ]
+}
