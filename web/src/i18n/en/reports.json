@@ -1,3 +1,6 @@
 {
-  "reports.title": "My Reports"
+  "reports.title": "My Reports",
+  "reports.guest": "Log in to see your reports.",
+  "reports.logIn": "Log in",
+  "reports.empty": "No reports yet."
 }

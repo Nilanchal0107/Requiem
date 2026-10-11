@@ -1,3 +1,11 @@
 {
-  "home.title": "Home"
+  "home.title": "Home",
+  "home.placeholder": "Copy and visuals arrive in V2.",
+  "home.hero.heading": "Hero",
+  "home.problem.heading": "Problem",
+  "home.howItWorks.heading": "How it works",
+  "home.different.heading": "Different",
+  "home.features.heading": "Features",
+  "home.schemes.heading": "Schemes",
+  "home.team.heading": "Team"
 }
