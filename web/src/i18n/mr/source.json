@@ -1,1 +1,8 @@
-{}
+{
+  "source.census": "जनगणना",
+  "source.osm": "नकाशा",
+  "source.user": "तुम्ही दिले",
+  "source.assumption": "आमचा अंदाज",
+  "source.scheme": "सरकारी योजना",
+  "source.computed": "गणना"
+}

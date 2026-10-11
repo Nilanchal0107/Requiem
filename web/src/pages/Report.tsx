@@ -57,7 +57,7 @@ export default function Report() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="explanation">
-          <ExplanationTab explanation={report.explanation} />
+          <ExplanationTab explanation={report.explanation} figures={report.engine.figures} />
         </TabsContent>
         <TabsContent value="numbers">
           <NumbersTab engine={report.engine} />

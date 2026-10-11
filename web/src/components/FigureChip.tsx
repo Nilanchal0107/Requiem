@@ -1,5 +1,6 @@
 import type { components } from "@/types/contracts"
 import type { Lang } from "@/i18n/resolve"
+import { formatFigure } from "@/lib/format"
 
 type Figure = components["schemas"]["Figure"]
 
@@ -9,6 +10,15 @@ export type FigureChipProps = {
   onOpen?: () => void
 }
 
-export function FigureChip(_props: FigureChipProps) {
-  return <span className="text-xs text-muted-foreground">FigureChip</span>
+// The ::after widens the tap area to 48 px without breaking the line height of the sentence.
+export function FigureChip({ figure, lang, onOpen }: FigureChipProps) {
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className="relative inline font-semibold text-primary underline decoration-dotted decoration-2 underline-offset-4 after:absolute after:inset-x-0 after:-inset-y-3 after:content-['']"
+    >
+      {formatFigure(figure, lang)}
+    </button>
+  )
 }

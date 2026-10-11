@@ -1,1 +1,8 @@
-{}
+{
+  "source.census": "Census",
+  "source.osm": "Map",
+  "source.user": "You entered",
+  "source.assumption": "Our estimate",
+  "source.scheme": "Govt scheme",
+  "source.computed": "Calculated"
+}

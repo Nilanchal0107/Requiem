@@ -1,1 +1,6 @@
-{}
+{
+  "figure.why": "Why this number?",
+  "figure.how": "How we calculated it",
+  "figure.estimate": "This is our estimate. If you know better, change it in Try changes.",
+  "figure.checked": "Numbers checked"
+}

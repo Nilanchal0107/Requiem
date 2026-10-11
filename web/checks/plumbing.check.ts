@@ -136,10 +136,16 @@ assert.equal(FakeEventSource.last.closed, true);
 failed();
 close();
 
-// Declared stubs: formatting and the V2 hooks throw "not implemented" until V2.
-const figure = { id: "x", label: "x", value: 1, unit: "INR", source: "computed" } as const;
-assert.throws(() => formatFigure(figure, "en"), /not implemented/);
-assert.throws(() => formatMoneyWords(1e5, "hi"), /not implemented/);
+// Formatting: lakh grouping, Devanagari digits for hi/mr, words line.
+const figure = { id: "x", label: "x", value: 417460, unit: "INR", source: "computed" } as const;
+assert.equal(formatFigure(figure, "en"), "₹4,17,460");
+assert.equal(formatFigure(figure, "mr"), "₹४,१७,४६०");
+assert.equal(formatFigure({ ...figure, value: 2.06, unit: "ratio" }, "en"), "2.06");
+assert.equal(formatFigure({ ...figure, value: 10, unit: "%" }, "hi"), "१०%");
+assert.equal(formatMoneyWords(1e5, "en"), "₹1 lakh");
+assert.equal(formatMoneyWords(150000, "hi"), "₹१.५ लाख");
+assert.equal(formatMoneyWords(500, "en"), "₹500");
+// Declared stubs: the V2 hooks throw "not implemented" until their ticket.
 assert.throws(() => useSimulate(), /not implemented/);
 assert.throws(() => useChat(), /not implemented/);
 
