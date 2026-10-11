@@ -1,3 +1,13 @@
 {
-  "compare.title": "Compare"
+  "compare.title": "Compare",
+  "compare.with": "Compare with {name}",
+  "compare.pick": "Same village, same money. Pick 1 or 2 more.",
+  "compare.current": "current",
+  "compare.go": "Compare",
+  "compare.verdict": "Verdict",
+  "compare.which": "Which suits you?",
+  "compare.open": "Open full DPR: {name}",
+  "compare.empty": "Nothing to compare yet",
+  "compare.emptyBody": "Build a report first, then compare it with other businesses.",
+  "compare.error": "Could not compare. Please try again."
 }

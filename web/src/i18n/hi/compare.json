@@ -1,1 +1,12 @@
-{}
+{
+  "compare.with": "{name} की तुलना करें",
+  "compare.pick": "वही गाँव, वही पैसा। 1 या 2 और चुनें।",
+  "compare.current": "अभी का",
+  "compare.go": "तुलना करें",
+  "compare.verdict": "नतीजा",
+  "compare.which": "आपके लिए कौन-सा ठीक है?",
+  "compare.open": "पूरी DPR खोलें: {name}",
+  "compare.empty": "अभी तुलना के लिए कुछ नहीं है",
+  "compare.emptyBody": "पहले रिपोर्ट बनाएँ, फिर दूसरे कारोबार से तुलना करें।",
+  "compare.error": "तुलना नहीं हो सकी। फिर कोशिश करें।"
+}

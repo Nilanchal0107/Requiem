@@ -16,7 +16,7 @@ export function MetricRows({ rows }: MetricRowsProps) {
           <dt className="text-sm">{row.label}</dt>
           <dd className="flex gap-2">
             {row.values.map((value, i) => (
-              <div key={i} className="flex min-w-22 flex-col items-end gap-1 text-right text-sm">
+              <div key={i} className="flex min-w-16 flex-col items-end gap-1 text-right text-sm">
                 {value}
                 {row.betterIndex === i && (
                   <span className="flex items-center gap-1 text-ok">

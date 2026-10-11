@@ -225,3 +225,9 @@ for (const bad of [null, "", "https://evil.example", "//evil.example", "/\\evil.
 assert.throws(() => useChat(), /not implemented/);
 
 console.log("plumbing checks passed");
+
+// betterIndex: picks the best by direction, and marks nothing on a tie.
+import { betterIndex } from "../src/lib/compare.ts";
+assert.equal(betterIndex([1.6, 1.2], "max"), 0);
+assert.equal(betterIndex([28, 14], "min"), 1);
+assert.equal(betterIndex([2, 2], "max"), undefined);
