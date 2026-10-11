@@ -13,11 +13,22 @@ class FigureRegistry:
 
         V2 must add at least one assert check.
         """
-        raise NotImplementedError("engine.figures.FigureRegistry.add")
+        assert isinstance(figure, Figure), "figure must be an instance of Figure"
+        assert figure.id, "figure.id must not be empty"
+        if figure.unit == "INR":
+            assert float(figure.value).is_integer(), f"INR figure {figure.id} must be whole rupees, got {figure.value}"
+
+        if figure.id in self._figures:
+            raise ValueError(f"Figure id {figure.id!r} is already registered")
+
+        self._figures[figure.id] = figure
+        return figure
 
     def as_dict(self) -> dict[str, Figure]:
         """Return the registry keyed by id, for EngineResult.figures.
 
         V2 must add at least one assert check.
         """
-        raise NotImplementedError("engine.figures.FigureRegistry.as_dict")
+        assert isinstance(self._figures, dict)
+        return dict(self._figures)
+

@@ -6,7 +6,7 @@
 
 **Blocked by:** 01
 
-**Status:** ready-for-agent
+**Status:** done
 
 ## Notes
 
@@ -17,8 +17,18 @@
 
 ## Acceptance criteria
 
-- [ ] The registry rejects a duplicate Figure id.
-- [ ] A test checks the dairy Project Cost and Funding Gap against hand-worked values.
-- [ ] A test shows dairy (Aggregator) has no Market Gap signal and kirana (local) has one.
-- [ ] Every money Figure is a whole number of rupees.
-- [ ] `uv run pytest tests/engine` passes.
+- [x] The registry rejects a duplicate Figure id.
+- [x] A test checks the dairy Project Cost and Funding Gap against hand-worked values.
+- [x] A test shows dairy (Aggregator) has no Market Gap signal and kirana (local) has one.
+- [x] Every money Figure is a whole number of rupees.
+- [x] `uv run pytest tests/engine` passes.
+
+## Comments
+
+- Implemented `engine/figures.py` (`FigureRegistry.add` with unique ID check and whole rupee verification for INR, `FigureRegistry.as_dict`).
+- Implemented `engine/market.py` (`households_now`, `our_capacity`, `sales_ceiling`, `analyse_market` handling aggregator vs local modes).
+- Implemented `engine/cost.py` (`build_cost` calculating item costs, working capital from target monthly utilisation, and total project cost).
+- Implemented `engine/finance.py` (`build_means_of_finance` registering own_contribution, funding_gap, loan, and subsidy).
+- Registered figure IDs match fixture schema: `households`, `our_capacity`, `potential_customers`, `demand`, `competitors`, `competitor_capacity`, `market_gap`, `cost.<item_id>`, `working_capital`, `project_cost`, `own_contribution`, `funding_gap`, `loan`, `subsidy`.
+- Tests in `tests/engine/test_market_cost.py` pass cleanly.
+

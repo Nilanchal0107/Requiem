@@ -71,7 +71,83 @@ def build_means_of_finance(
     Adds own_contribution, funding_gap, loan and subsidy figures to `reg`.
     V2 must add at least one assert check.
     """
-    raise NotImplementedError("engine.finance.build_means_of_finance")
+    assert isinstance(input, IntakeInput)
+    assert isinstance(cost, CostBreakdown)
+    assert isinstance(reg, FigureRegistry)
+
+    project_cost = int(cost.project_cost.value)
+    own_contrib = int(input.own_contribution)
+    gap = max(0, project_cost - own_contrib)
+
+    fig_own = reg.add(
+        Figure(
+            id="own_contribution",
+            label="Own Contribution",
+            value=float(own_contrib),
+            unit="INR",
+            source="user",
+        )
+    )
+
+    fig_gap = reg.add(
+        Figure(
+            id="funding_gap",
+            label="Funding Gap",
+            value=float(gap),
+            unit="INR",
+            source="computed",
+            formula="project_cost - own_contribution",
+            inputs={
+                "project_cost": float(project_cost),
+                "own_contribution": float(own_contrib),
+            },
+        )
+    )
+
+    if best is not None:
+        loan_val = int(best.terms.principal)
+        subsidy_val = int(getattr(best, "subsidy_amount", 0) or 0)
+        subsidy_backended = bool(getattr(best, "subsidy_backended", False))
+        formula_loan = f"funding_gap (within {best.name} maximum)"
+        subsidy_note = None if subsidy_val > 0 else f"{best.name} has no capital subsidy"
+    else:
+        loan_val = gap
+        subsidy_val = 0
+        subsidy_backended = False
+        formula_loan = "funding_gap"
+        subsidy_note = "No eligible scheme"
+
+    fig_loan = reg.add(
+        Figure(
+            id="loan",
+            label="Loan",
+            value=float(loan_val),
+            unit="INR",
+            source="computed",
+            formula=formula_loan,
+            inputs={"funding_gap": float(gap)},
+        )
+    )
+
+    fig_sub = reg.add(
+        Figure(
+            id="subsidy",
+            label="Subsidy",
+            value=float(subsidy_val),
+            unit="INR",
+            source="scheme",
+            note=subsidy_note,
+        )
+    )
+
+    return MeansOfFinance(
+        own_contribution=fig_own,
+        loan=fig_loan,
+        subsidy=fig_sub,
+        subsidy_backended=subsidy_backended,
+        funding_gap=fig_gap,
+    )
+
 
 
 def break_even_month(
