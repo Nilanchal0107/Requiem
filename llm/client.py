@@ -66,9 +66,11 @@ def complete(
     response_format = {"type": "json_object"} if json else None
     timeout = float(os.getenv("LLM_TIMEOUT_S", "15"))
 
-    def _call(prov: str) -> ChatCompletion:
+    def _call(prov: str, model: str | None = None) -> ChatCompletion:
         b_url, a_key, mod = _get_provider_config(prov)
-        client = OpenAI(base_url=b_url, api_key=a_key, timeout=timeout)
+        mod = model or mod
+        # max_retries=0: the SDK otherwise sleeps through 429s (up to ~40 s); falling over to the other provider is faster
+        client = OpenAI(base_url=b_url, api_key=a_key, timeout=timeout, max_retries=0)
         kwargs: dict[str, Any] = {
             "model": mod,
             "messages": messages,
@@ -80,12 +82,18 @@ def complete(
             kwargs["response_format"] = response_format
         return client.chat.completions.create(**kwargs)
 
+    # Groq rate limits are per model, so more Groq models are cheap extra tries before the other provider.
+    backups = [m.strip() for m in os.getenv("GROQ_BACKUP_MODELS", "qwen/qwen3.8-27b,openai/gpt-oss-20b").split(",") if m.strip()]
+    attempts = [(primary, None), *(("groq", m) for m in backups), (fallback, None)]
     res: ChatCompletion | None = None
-    try:
-        res = _call(primary)
-    except Exception:
-        # Fallback to secondary
-        res = _call(fallback)
+    for i, (prov, model) in enumerate(attempts):
+        try:
+            res = _call(prov, model)
+            break
+        except Exception:
+            if i == len(attempts) - 1:
+                raise
+    assert res is not None
 
     if mode == CacheMode.RECORD:
         _DATA_DIR.mkdir(parents=True, exist_ok=True)

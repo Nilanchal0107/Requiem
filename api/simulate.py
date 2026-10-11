@@ -1,12 +1,13 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlmodel import Session
 
+from api import live
 from api.contracts import EngineResult, IntakeInput
-from api.settings import fixture
+from api.deps import get_session
 
 router = APIRouter(prefix="/api", tags=["simulate"])
 
 
-# shortcut: returns the fixture report's engine output whatever the intake; V2 swaps in engine.run
 @router.post("/simulate", response_model=EngineResult)
-def simulate(body: IntakeInput):
-    return EngineResult.model_validate(fixture("report.json")["engine"])
+def simulate(body: IntakeInput, session: Session = Depends(get_session)):
+    return live.engine_for(body, session)

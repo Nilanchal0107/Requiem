@@ -1,7 +1,8 @@
-import { CircleCheck } from "lucide-react"
+import { CircleCheck, LoaderCircle } from "lucide-react"
 import { ExplanationUnavailable } from "@/components/ExplanationUnavailable"
 import { FigureText } from "@/components/FigureText"
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 import { useLang, useT } from "@/i18n"
 import type { Lang } from "@/i18n/resolve"
 import { formatValue } from "@/lib/format"
@@ -17,7 +18,9 @@ export type ExplanationTabProps = {
   explanation: Explanation | null
   engine: EngineResult
   onOpenFigure: (figure: Figure, lang: Lang) => void
-  /** Reloads the report; the API has no separate "write the explanation again" call. */
+  /** True while the explanation is being written live. */
+  writing: boolean
+  /** Writes the explanation again. */
   onRetry: () => void
   /** "Try it" on a Path to Yes card. */
   onTry: (change: Change) => void
@@ -56,14 +59,26 @@ function PathToYes({ changes, onTry }: { changes: Change[]; onTry: (change: Chan
   )
 }
 
-export function ExplanationTab({ explanation, engine, onOpenFigure, onRetry, onTry }: ExplanationTabProps) {
+export function ExplanationTab({ explanation, engine, onOpenFigure, writing, onRetry, onTry }: ExplanationTabProps) {
   const t = useT()
   const path = engine.path_to_yes?.changes.length ? <PathToYes changes={engine.path_to_yes.changes} onTry={onTry} /> : null
   if (!explanation || !explanation.available) {
     // The numbers don't depend on the LLM, so they all still show.
     return (
       <div className="flex flex-col gap-4">
-        <ExplanationUnavailable onRetry={onRetry} />
+        {writing ? (
+          <div role="status" aria-live="polite" className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4">
+            <p className="flex items-start gap-2 text-body">
+              <LoaderCircle aria-hidden="true" className="mt-1 size-5 shrink-0 animate-spin text-primary" />
+              {t("report.explanationWriting")}
+            </p>
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-5/6" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
+        ) : (
+          <ExplanationUnavailable onRetry={onRetry} />
+        )}
         {path}
         <NumbersTab engine={engine} onOpenFigure={onOpenFigure} />
       </div>
@@ -87,6 +102,12 @@ export function ExplanationTab({ explanation, engine, onOpenFigure, onRetry, onT
   )
   return (
     <div className="flex flex-col gap-4">
+      {writing && (
+        <p role="status" aria-live="polite" className="flex items-center gap-2 rounded-card border border-border bg-surface p-3 text-sm">
+          <LoaderCircle aria-hidden="true" className="size-5 shrink-0 animate-spin text-primary" />
+          {t("report.explanationTranslating")}
+        </p>
+      )}
       <p className="flex items-center gap-2 text-sm text-text-muted">
         <CircleCheck aria-hidden="true" className="size-5 text-ok" />
         {t("figure.checked")}: {count(explanation.verified)}/{count(explanation.total)}

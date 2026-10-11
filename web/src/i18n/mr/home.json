@@ -1,1 +1,26 @@
-{}
+{
+  "home.hero.title": "तुमचा व्यवसाय तुमच्या गावात चालेल का?",
+  "home.hero.body": "बँकेसाठी तयार प्रकल्प अहवाल आणि कर्ज योजना मिळवा, मराठी, हिंदी किंवा इंग्रजीत समजावून सांगितलेली.",
+  "home.cta": "माझा DPR सुरू करा — मोफत",
+  "home.problem.heading": "आम्ही हे ३ प्रश्न सोडवतो",
+  "home.problem.q1": "हे इथे चालेल का?",
+  "home.problem.q2": "मला किती पैसे लागतील?",
+  "home.problem.q3": "कोणते सरकारी कर्ज, आणि EMI किती?",
+  "home.howItWorks.heading": "हे कसे काम करते",
+  "home.howItWorks.s1": "तुमचे गाव आणि तुमची कल्पना सांगा",
+  "home.howItWorks.s2": "आम्ही बाजार, खर्च आणि योजना तपासतो",
+  "home.howItWorks.s3": "तुमचा DPR आणि सोपा सल्ला मिळवा",
+  "home.different.heading": "विश्वास का ठेवावा",
+  "home.different.d1": "प्रत्येक आकडा त्याचा स्रोत दाखवतो",
+  "home.different.d2": "खऱ्या सरकारी योजना, तपासल्याच्या तारखेसह",
+  "home.different.d3": "बँकेचा दस्तऐवज जो तुम्ही शेअर करू शकता",
+  "home.features.heading": "तुम्हाला काय मिळते",
+  "home.features.f1": "अहवाल आणि तक्ते",
+  "home.features.f2": "बदल करून पाहा",
+  "home.features.f3": "व्यवसायांची तुलना",
+  "home.features.f4": "३ भाषा",
+  "home.schemes.heading": "समाविष्ट योजना",
+  "home.team.heading": "टीम",
+  "home.team.body": "निफाड, नाशिकसाठी तिघांच्या टीमने बनवले.",
+  "home.disclaimer": "फक्त अंदाज. तुमच्या बँकेकडून खात्री करा."
+}

@@ -96,5 +96,9 @@
   "wizard.describe.placeholder": "जैसे: मैं अपने गाँव में 5 पशुओं के साथ डेयरी शुरू करना चाहता हूँ।",
   "wizard.describe.go": "फ़ॉर्म भरें",
   "wizard.describe.error": "हम इसे पढ़ नहीं सके। अपना कनेक्शन जाँचें और फिर कोशिश करें।",
-  "wizard.describe.missing": "अभी भी चाहिए: {fields}"
+  "wizard.describe.missing": "अभी भी चाहिए: {fields}",
+  "wizard.describe.speak": "बोलें",
+  "wizard.describe.stop": "रोकें",
+  "wizard.describe.hearing": "सुन रहे हैं…",
+  "wizard.describe.voiceError": "हम सुन नहीं सके। माइक की अनुमति दें या लिखें।"
 }

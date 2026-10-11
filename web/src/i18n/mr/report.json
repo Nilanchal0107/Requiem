@@ -1,4 +1,5 @@
 {
+  "report.explanationWriting": "तुमचे स्पष्टीकरण लिहिले जात आहे… याला एक मिनिटापर्यंत लागू शकतो. खालील आकडे तयार आहेत.",
   "report.explanationUnavailable": "सध्या आम्ही स्पष्टीकरण लिहू शकलो नाही. खालील सर्व आकडे पूर्ण आहेत.",
   "report.swot.good": "चांगले",
   "report.swot.watch": "काळजी घ्या",
@@ -77,5 +78,20 @@
   "report.chat.error": "उत्तर मिळाले नाही. कनेक्शन तपासा आणि पुन्हा प्रयत्न करा.",
   "report.chat.source": "स्रोत",
   "report.chat.thinking": "विचार करत आहोत…",
-  "report.chat.suggested": "तुम्ही हे करून पाहू शकता"
+  "report.chat.suggested": "तुम्ही हे करून पाहू शकता",
+  "report.title": "अहवाल",
+  "report.loading": "लोड होत आहे…",
+  "report.notReady": "हा अहवाल अजून तयार नाही.",
+  "report.error": "अहवाल लोड होऊ शकला नाही.",
+  "report.retry": "पुन्हा प्रयत्न करा",
+  "report.tab.explanation": "स्पष्टीकरण",
+  "report.tab.numbers": "आकडे",
+  "report.tab.bank": "बँक DPR",
+  "report.tryChanges": "बदल करून पहा",
+  "report.ask": "विचारा",
+  "report.whatIf.title": "बदल करून पहा",
+  "report.chat.title": "विचारा",
+  "report.sheet.empty": "इथे अजून काही नाही.",
+  "report.explanationTranslating": "स्पष्टीकरण तुमच्या भाषेत लिहिले जात आहे…",
+  "report.compare": "दुसऱ्या व्यवसायाशी तुलना करा"
 }

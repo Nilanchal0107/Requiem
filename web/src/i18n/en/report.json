@@ -12,6 +12,7 @@
   "report.whatIf.title": "Try changes",
   "report.chat.title": "Ask",
   "report.sheet.empty": "Nothing here yet.",
+  "report.explanationWriting": "Writing your explanation… this can take up to a minute. The numbers below are ready.",
   "report.explanationUnavailable": "We couldn't write the explanation right now. All numbers below are complete.",
   "report.swot.good": "Good",
   "report.swot.watch": "Watch out",
@@ -90,5 +91,7 @@
   "report.chat.error": "We could not get an answer. Check your connection and try again.",
   "report.chat.source": "Source",
   "report.chat.thinking": "Thinking…",
-  "report.chat.suggested": "You could try"
+  "report.chat.suggested": "You could try",
+  "report.explanationTranslating": "Writing the explanation in your language…",
+  "report.compare": "Compare with another business"
 }

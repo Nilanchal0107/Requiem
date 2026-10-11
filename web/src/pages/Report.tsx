@@ -1,10 +1,10 @@
 import { useState } from "react"
-import { useParams, useSearchParams } from "react-router"
-import { BookOpen, Calculator, FileText, MessageCircle, SlidersHorizontal } from "lucide-react"
+import { Link, useParams, useSearchParams } from "react-router"
+import { BookOpen, Calculator, Scale, FileText, MessageCircle, SlidersHorizontal } from "lucide-react"
 import { BottomActionBar } from "@/components/BottomActionBar"
 import { ErrorState } from "@/components/ErrorState"
 import { FigureSheet } from "@/components/FigureSheet"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useReport } from "@/hooks/useReport"
@@ -28,7 +28,7 @@ export default function Report() {
   const lang = useLang()
   const { id = "" } = useParams()
   const [params, setParams] = useSearchParams()
-  const { report, error, retry } = useReport(id)
+  const { report, error, retry, writing, rewrite } = useReport(id)
   const [whatIfOpen, setWhatIfOpen] = useState(false)
   // The Path to Yes change the sheet opens with; null when opened from the bottom bar.
   const [whatIfChange, setWhatIfChange] = useState<Change | null>(null)
@@ -94,9 +94,14 @@ export default function Report() {
             explanation={report.explanation}
             engine={engine}
             onOpenFigure={openFigure}
-            onRetry={retry}
+            writing={writing}
+            onRetry={rewrite}
             onTry={openWhatIf}
           />
+          <Link to={`/compare?report=${id}`} className={buttonVariants({ variant: "outline", className: "mt-4 h-12 w-full gap-2" })}>
+            <Scale aria-hidden="true" className="size-5" />
+            {t("report.compare")}
+          </Link>
         </TabsContent>
         <TabsContent value="numbers" className="print:hidden">
           <NumbersTab engine={engine} onOpenFigure={openFigure} />

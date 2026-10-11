@@ -4,13 +4,20 @@ from fastapi import FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 
 from api import auth, catalog, chat, compare, intake, reports, simulate, voice
-from api.db import create_tables
+from sqlmodel import Session
+
+from api.db import create_tables, engine
+from api.demo_seed import seed_demo
 from api.settings import SESSION_SECRET
+from data.loaders import seed_villages
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_tables()
+    with Session(engine) as session:
+        seed_villages(session)
+        seed_demo(session)
     yield
 
 

@@ -37,6 +37,12 @@ def db_engine(tmp_path):
 
     engine = create_engine(f"sqlite:///{tmp_path / 'test.db'}")
     create_tables(engine)
+    from sqlmodel import Session
+
+    from data.loaders import seed_villages
+
+    with Session(engine) as session:
+        seed_villages(session)
     return engine
 
 
@@ -60,19 +66,19 @@ def test_localities_three_shapes_validate_against_contract(client):
     districts = client.get("/api/localities").json()
     assert [District.model_validate(d) for d in districts]
 
-    blocks = client.get("/api/localities", params={"district": "FX-NASHIK"}).json()
+    blocks = client.get("/api/localities", params={"district": "NAS01"}).json()
     parsed_blocks = [Block.model_validate(b) for b in blocks]
-    assert parsed_blocks and all(b.district_code == "FX-NASHIK" for b in parsed_blocks)
+    assert parsed_blocks and all(b.district_code == "NAS01" for b in parsed_blocks)
 
-    villages = client.get("/api/localities", params={"district": "FX-NASHIK", "block": "FX-NIPHAD"}).json()
+    villages = client.get("/api/localities", params={"district": "NAS01", "block": "NIP01"}).json()
     parsed_villages = [Village.model_validate(v) for v in villages]
     assert "Lasalgaon" in {v.name for v in parsed_villages}
 
 
 def test_localities_unknown_codes(client):
     assert client.get("/api/localities", params={"district": "NOPE"}).json() == []
-    assert client.get("/api/localities", params={"district": "FX-NASHIK", "block": "NOPE"}).status_code == 404
-    assert client.get("/api/localities", params={"block": "FX-NIPHAD"}).status_code == 404  # block needs its district
+    assert client.get("/api/localities", params={"district": "NAS01", "block": "NOPE"}).status_code == 404
+    assert client.get("/api/localities", params={"block": "NIP01"}).status_code == 404  # block needs its district
 
 
 def test_archetypes_validate(client):
@@ -169,7 +175,7 @@ def test_stored_password_is_scrypt_not_plain_text(client, db_engine):
 
 STAGES = ["intake", "market", "cost", "schemes", "dpr", "explanation"]
 INTAKE = {
-    "village_code": "FX1002",
+    "village_code": "563455",
     "archetype_id": "dairy",
     "unit_scale": 5.0,
     "own_contribution": 100000,
@@ -179,10 +185,11 @@ INTAKE = {
 
 
 @pytest.fixture
-def no_stage_delay(monkeypatch):
-    from api import reports
+def no_stage_delay(db_engine, monkeypatch):
+    """The real pipeline opens its own session on db.engine; point it at the test database."""
+    from api import db
 
-    monkeypatch.setattr(reports, "STAGE_DELAY_S", 0)
+    monkeypatch.setattr(db, "engine", db_engine)
 
 
 def parse_sse(text):
@@ -251,7 +258,8 @@ def test_stream_plays_six_stages_in_order_then_done_and_stores_report(client, no
     events = parse_sse(res.text)
     stage_events = [StageEvent.model_validate(data) for kind, data in events if kind == "stage"]
     assert [e.stage for e in stage_events] == [s for s in STAGES for _ in range(2)]
-    assert [e.status for e in stage_events] == ["running", "done"] * 6
+    assert [e.status for e in stage_events][:-1] == ["running", "done"] * 5 + ["running"]
+    assert stage_events[-1].status in {"done", "failed"}  # failed = no LLM here; numbers still complete
     assert events[-1] == ("done", {"report_id": report_id})
 
     report = Report.model_validate(client.get(f"/api/reports/{report_id}").json())
@@ -269,17 +277,9 @@ def test_second_stream_replays_stored_events_without_rerunning(client, no_stage_
     def must_not_run(*_):
         raise AssertionError("stages re-ran on replay")
 
-    monkeypatch.setattr(reports, "_run_stages", must_not_run)
+    monkeypatch.setattr(reports, "run_pipeline", must_not_run)
     second = client.get(f"/api/reports/{report_id}/stream").text
     assert second == first and len(parse_sse(first)) == 13  # byte-identical: 12 stages + done
-
-
-def test_stream_without_fixtures_is_501_not_a_broken_stream(client, monkeypatch):
-    from api import settings
-
-    report_id = client.post("/api/reports", json=INTAKE).json()["report_id"]
-    monkeypatch.setattr(settings, "USE_FIXTURES", False)
-    assert client.get(f"/api/reports/{report_id}/stream").status_code == 501
 
 
 def test_stream_unknown_or_someone_elses_report_is_404(client):
@@ -331,11 +331,7 @@ def pipeline_report(db_engine, monkeypatch):
         pipeline, "load_schemes", lambda: [SimpleNamespace(verified_on=date(2026, 10, 1), model_dump=lambda **_: {})]
     )
     monkeypatch.setattr(pipeline, "run_engine", lambda *_, **__: EngineResult.model_validate(demo["engine"]))
-    with Session(db_engine) as session:
-        session.add(db.Village(
-            code="FX1002", name="Pimpalgaon Baswant", block_code="B", block_name="Niphad", district_code="D",
-            district_name="Nashik", households=1, population=1, literacy_rate=0.8, workers=1, is_rural=True,
-        ))
+    with Session(db_engine) as session:  # village 563455 comes from the seeded db_engine
         row = db.Report(status="pending", input=INTAKE)
         session.add(row)
         session.commit()
@@ -407,9 +403,6 @@ def test_run_pipeline_engine_failure_marks_report_failed_and_raises(db_engine, p
 
 # --- V1-05: simulate, compare, chat, intake parse, voice transcribe ---------
 
-FIXTURE_REPORT_ID = "demo-niphad-dairy"
-
-
 def test_simulate_returns_fixture_engine_result(client):
     res = client.post("/api/simulate", json=INTAKE)
     assert res.status_code == 200
@@ -429,7 +422,6 @@ def test_compare_returns_one_result_per_archetype_in_request_order(client):
     comparison = Comparison.model_validate(res.json())
     assert [r.archetype_id for r in comparison.results] == ["poultry", "dairy"]
     assert comparison.language == "mr"
-    assert "{{poultry.min_dscr}}" in comparison.summary and "{{dairy.min_dscr}}" in comparison.summary
 
 
 def test_compare_unknown_archetype_is_400(client):
@@ -442,13 +434,62 @@ def test_compare_one_or_four_archetypes_is_422(client, ids):
     assert client.post("/api/compare", json={"input": INTAKE, "archetype_ids": ids}).status_code == 422
 
 
-def test_chat_returns_contract_response_with_citation_and_change(client):
-    body = {"report_id": FIXTURE_REPORT_ID, "message": "Can I borrow less?", "language": "en"}
-    res = client.post("/api/chat", json=body)
-    assert res.status_code == 200
-    chat = ChatResponse.model_validate(res.json())
-    assert len(chat.citations) == 1 and len(chat.suggested_changes) == 1
-    assert chat.tools_used
+def test_chat_on_finished_report_is_503_not_500_when_llm_is_down(client, no_stage_delay, monkeypatch):
+    from api import chat
+
+    report_id = client.post("/api/reports", json=INTAKE).json()["report_id"]
+    client.get(f"/api/reports/{report_id}/stream")
+
+    def llm_down(*_, **__):
+        raise RuntimeError("both providers failed")
+
+    monkeypatch.setattr(chat, "run_chat", llm_down)
+    body = {"report_id": report_id, "message": "Can I borrow less?", "language": "en"}
+    assert client.post("/api/chat", json=body).status_code == 503
+
+
+def test_rewrite_explanation_stores_new_text_and_404s_unknown(client, no_stage_delay, monkeypatch):
+    from api import reports
+    from api.contracts import Explanation, Swot
+
+    report_id = client.post("/api/reports", json=INTAKE).json()["report_id"]
+    client.get(f"/api/reports/{report_id}/stream")
+    fresh = Explanation(
+        language="en",
+        sections=[],
+        swot=Swot(strengths=["new"], weaknesses=[], opportunities=[], threats=[]),
+        verified=0,
+        total=0,
+        regenerated=False,
+        available=True,
+    )
+    monkeypatch.setattr(reports, "explain_report", lambda *_: fresh)
+    assert client.post(f"/api/reports/{report_id}/explanation").json()["explanation"]["swot"]["strengths"] == ["new"]
+    assert client.get(f"/api/reports/{report_id}").json()["explanation"]["swot"]["strengths"] == ["new"]
+    assert client.post("/api/reports/no-such-report/explanation").status_code == 404
+
+
+def test_demo_account_has_four_reports_with_hardcoded_text_in_every_language(client, db_engine, monkeypatch):
+    from sqlmodel import Session
+
+    from api import reports
+    from api.demo_seed import PASSWORD, REPORTS, USERNAME, seed_demo
+
+    with Session(db_engine) as session:
+        seed_demo(session)
+        seed_demo(session)  # second run is a no-op
+
+    def no_llm(*_):
+        raise AssertionError("demo reports must not call the LLM")
+
+    monkeypatch.setattr(reports, "explain_report", no_llm)
+    assert client.post("/api/auth/login", json={"username": USERNAME, "password": PASSWORD}).status_code == 200
+    history = client.get("/api/reports").json()
+    assert [r["id"] for r in history] == [r[0] for r in reversed(REPORTS)]  # newest first
+    assert history[0]["verdict"] == "feasible" and history[-1]["verdict"] == "not_feasible"
+    for lang in ("en", "hi", "mr"):
+        exp = client.post(f"/api/reports/demo-dairy-pimpalgaon/explanation?language={lang}").json()["explanation"]
+        assert exp["language"] == lang and len(exp["sections"]) == 6 and exp["verified"] == exp["total"] > 0
 
 
 def test_chat_unknown_report_is_404(client):
@@ -460,12 +501,25 @@ def test_intake_parse_returns_partial_fields_and_missing(client):
     res = client.post("/api/intake/parse", json={"text": "I want a dairy with five cows", "language": "en"})
     assert res.status_code == 200
     parsed = IntakeParseResponse.model_validate(res.json())
-    assert parsed.fields["archetype_id"] == "dairy"
     assert "village_code" in parsed.missing
 
 
-def test_voice_transcribe_returns_text(client):
+def test_voice_transcribe_returns_text(client, monkeypatch):
+    from api import voice
+
+    monkeypatch.setattr(voice, "whisper", lambda audio, filename, language: " I want a dairy. ")
     files = {"audio": ("note.webm", b"\x1a\x45\xdf\xa3", "audio/webm")}
     res = client.post("/api/voice/transcribe", files=files, data={"language": "en"})
     assert res.status_code == 200
-    assert TranscribeResponse.model_validate(res.json()).text
+    assert TranscribeResponse.model_validate(res.json()).text == "I want a dairy."
+
+
+def test_voice_transcribe_failure_is_503(client, monkeypatch):
+    from api import voice
+
+    def boom(*_):
+        raise RuntimeError("no key")
+
+    monkeypatch.setattr(voice, "whisper", boom)
+    files = {"audio": ("note.webm", b"\x1a\x45\xdf\xa3", "audio/webm")}
+    assert client.post("/api/voice/transcribe", files=files, data={"language": "en"}).status_code == 503

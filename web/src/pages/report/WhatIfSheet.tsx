@@ -59,7 +59,8 @@ function WhatIfBody({ report, change, close }: { report: Report; change: Change 
   const original: Values = {
     own_contribution: input.own_contribution,
     unit_scale: input.unit_scale,
-    tenure_months: input.tenure_months ?? base.figures.tenure_months.value,
+    // no Scheme matched = no tenure figure; 60 is only the slider start, unmoved it still sends null
+    tenure_months: input.tenure_months ?? base.figures.tenure_months?.value ?? 60,
   }
   const [values, setValues] = useState<Values>(change ? { ...original, [change.field]: change.to_value } : original)
   const [archetype, setArchetype] = useState<ArchetypeSummary | null>(null)

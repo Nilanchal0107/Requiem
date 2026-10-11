@@ -14,7 +14,7 @@ export function CostBreakdownChart({ cost, lang }: CostBreakdownChartProps) {
   const t = useT()
   const working = cost.project_cost.inputs?.working_capital
   const bars = [
-    ...cost.items.map((item) => ({ name: item.name, value: item.figure.value })),
+    ...cost.items.map((item) => ({ name: t(`figure.label.${item.figure.id}`, item.name), value: item.figure.value })),
     ...(working ? [{ name: t("report.chart.working"), value: working }] : []),
   ].sort((a, b) => b.value - a.value)
   const max = Math.max(...bars.map((b) => b.value), 1)

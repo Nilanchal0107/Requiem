@@ -135,8 +135,8 @@ export default function Compare() {
     },
     {
       label: t("verdict.emi"),
-      values: rs.map((r) => formatHeadline(r.figures.emi, lang)),
-      betterIndex: betterIndex(rs.map((r) => r.figures.emi.value), "min"),
+      values: rs.map((r) => (r.figures.emi ? formatHeadline(r.figures.emi, lang) : "—")),
+      betterIndex: betterIndex(rs.map((r) => r.figures.emi?.value ?? Infinity), "min"),
     },
     {
       label: t("report.key.dscr"),

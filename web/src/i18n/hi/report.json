@@ -1,4 +1,5 @@
 {
+  "report.explanationWriting": "आपकी समझावट लिखी जा रही है… इसमें एक मिनट तक लग सकता है। नीचे के आँकड़े तैयार हैं।",
   "report.explanationUnavailable": "अभी हम समझावट नहीं लिख पाए। नीचे सभी आँकड़े पूरे हैं।",
   "report.swot.good": "अच्छा",
   "report.swot.watch": "ध्यान रखें",
@@ -77,5 +78,20 @@
   "report.chat.error": "जवाब नहीं मिल सका। अपना कनेक्शन जाँचें और फिर कोशिश करें।",
   "report.chat.source": "स्रोत",
   "report.chat.thinking": "सोच रहे हैं…",
-  "report.chat.suggested": "आप यह आज़मा सकते हैं"
+  "report.chat.suggested": "आप यह आज़मा सकते हैं",
+  "report.title": "रिपोर्ट",
+  "report.loading": "लोड हो रहा है…",
+  "report.notReady": "यह रिपोर्ट अभी तैयार नहीं है।",
+  "report.error": "रिपोर्ट लोड नहीं हो पाई।",
+  "report.retry": "फिर से कोशिश करें",
+  "report.tab.explanation": "समझावट",
+  "report.tab.numbers": "आँकड़े",
+  "report.tab.bank": "बैंक DPR",
+  "report.tryChanges": "बदलाव आज़माएँ",
+  "report.ask": "पूछें",
+  "report.whatIf.title": "बदलाव आज़माएँ",
+  "report.chat.title": "पूछें",
+  "report.sheet.empty": "अभी यहाँ कुछ नहीं है।",
+  "report.explanationTranslating": "समझावट आपकी भाषा में लिखी जा रही है…",
+  "report.compare": "दूसरे व्यवसाय से तुलना करें"
 }

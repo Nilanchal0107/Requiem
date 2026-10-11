@@ -12,8 +12,9 @@ type Figure = components["schemas"]["Figure"]
 
 export type VerdictCardProps = {
   verdict: Verdict
-  loan: Figure
-  emi: Figure
+  loan?: Figure
+  /** Missing when no Scheme matched: there is no loan to repay. */
+  emi?: Figure
   schemeName: string | null
   /** All the report's Figures, so the reason line can show its number as a chip. */
   figures?: Record<string, Figure>
@@ -49,7 +50,7 @@ export function VerdictCard({ verdict, loan, emi, schemeName, figures = {}, onOp
         {[
           { label: t("verdict.loan"), figure: loan },
           { label: t("verdict.emi"), figure: emi },
-        ].map(({ label, figure }) => (
+        ].flatMap(({ label, figure }) => (figure ? [{ label, figure }] : [])).map(({ label, figure }) => (
           <div key={figure.id}>
             <dt className="text-sm text-text-muted">{label}</dt>
             <dd>

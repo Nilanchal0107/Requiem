@@ -1,1 +1,26 @@
-{}
+{
+  "home.hero.title": "क्या आपका व्यवसाय आपके गाँव में चलेगा?",
+  "home.hero.body": "बैंक के लिए तैयार प्रोजेक्ट रिपोर्ट और लोन योजना पाएँ, मराठी, हिंदी या अंग्रेज़ी में समझाई गई।",
+  "home.cta": "मेरी DPR शुरू करें — मुफ़्त",
+  "home.problem.heading": "हम ये 3 सवाल हल करते हैं",
+  "home.problem.q1": "क्या यह यहाँ चलेगा?",
+  "home.problem.q2": "मुझे कितने पैसे चाहिए?",
+  "home.problem.q3": "कौन सा सरकारी लोन, और EMI कितनी?",
+  "home.howItWorks.heading": "यह कैसे काम करता है",
+  "home.howItWorks.s1": "अपना गाँव और अपना विचार बताइए",
+  "home.howItWorks.s2": "हम बाज़ार, लागत और योजनाएँ जाँचते हैं",
+  "home.howItWorks.s3": "अपनी DPR और आसान सलाह पाइए",
+  "home.different.heading": "भरोसा क्यों करें",
+  "home.different.d1": "हर संख्या अपना स्रोत दिखाती है",
+  "home.different.d2": "असली सरकारी योजनाएँ, जाँच की तारीख के साथ",
+  "home.different.d3": "बैंक दस्तावेज़ जिसे आप साझा कर सकते हैं",
+  "home.features.heading": "आपको क्या मिलता है",
+  "home.features.f1": "रिपोर्ट और चार्ट",
+  "home.features.f2": "बदलाव आज़माएँ",
+  "home.features.f3": "व्यवसायों की तुलना",
+  "home.features.f4": "3 भाषाएँ",
+  "home.schemes.heading": "शामिल योजनाएँ",
+  "home.team.heading": "टीम",
+  "home.team.body": "निफाड, नाशिक के लिए तीन लोगों की टीम ने बनाया।",
+  "home.disclaimer": "केवल अनुमान। अपने बैंक से पुष्टि करें।"
+}

@@ -23,7 +23,7 @@ export function FigureSheet({ figure, lang, open, onOpenChange }: FigureSheetPro
           <>
             <SheetHeader>
               <SheetTitle>{t("figure.why")}</SheetTitle>
-              <SheetDescription>{figure.label}</SheetDescription>
+              <SheetDescription>{t(`figure.label.${figure.id}`, figure.label)}</SheetDescription>
             </SheetHeader>
             <div className="flex flex-col gap-3 px-4 pb-6">
               <p className="text-3xl font-bold">{formatFigure(figure, lang)}</p>
@@ -41,7 +41,7 @@ export function FigureSheet({ figure, lang, open, onOpenChange }: FigureSheetPro
                 <dl className="flex flex-col gap-1 text-sm">
                   {Object.entries(figure.inputs).map(([name, value]) => (
                     <div key={name} className="flex justify-between gap-4 border-b border-border py-1">
-                      <dt className="text-text-muted">{name.replace(/_/g, " ")}</dt>
+                      <dt className="text-text-muted">{t(`figure.label.${name}`, name.replace(/_/g, " "))}</dt>
                       <dd className="font-semibold">{formatFigure({ ...figure, value, unit: "count" }, lang)}</dd>
                     </div>
                   ))}

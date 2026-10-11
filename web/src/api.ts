@@ -1,4 +1,5 @@
 import type { components } from "./types/contracts.ts";
+import type { Lang } from "./i18n/resolve.ts";
 
 export type ArchetypeSummary = components["schemas"]["ArchetypeSummary"];
 export type Credentials = components["schemas"]["Credentials"];
@@ -67,6 +68,11 @@ export function getReport(id: string): Promise<Report> {
   return request<Report>(`/api/reports/${id}`);
 }
 
+/** Writes the explanation again, live, from the stored engine result; `language` writes it in another language. */
+export function rewriteExplanation(id: string, language?: Lang): Promise<Report> {
+  return postJson<Report>(`/api/reports/${id}/explanation${language ? `?language=${language}` : ""}`, {});
+}
+
 export function listSchemes(): Promise<SchemeSummary[]> {
   return request<SchemeSummary[]>("/api/schemes");
 }
@@ -81,4 +87,11 @@ export function listLocalities(district?: string, block?: string): Promise<Distr
 
 export function parseIntake(text: string, language: string): Promise<IntakeParseResponse> {
   return postJson<IntakeParseResponse>("/api/intake/parse", { text, language });
+}
+
+export function transcribe(audio: Blob, language: string): Promise<{ text: string }> {
+  const body = new FormData();
+  body.append("audio", audio, "voice.webm");
+  body.append("language", language);
+  return request<{ text: string }>("/api/voice/transcribe", { method: "POST", body });
 }

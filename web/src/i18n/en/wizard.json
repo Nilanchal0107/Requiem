@@ -95,5 +95,9 @@
   "wizard.describe.placeholder": "For example: I want to start a dairy in my village with 5 animals.",
   "wizard.describe.go": "Fill the form",
   "wizard.describe.error": "We could not read that. Check your connection and try again.",
-  "wizard.describe.missing": "Still needed: {fields}"
+  "wizard.describe.missing": "Still needed: {fields}",
+  "wizard.describe.speak": "Speak",
+  "wizard.describe.stop": "Stop",
+  "wizard.describe.hearing": "Listening…",
+  "wizard.describe.voiceError": "We could not hear that. Allow the microphone or type instead."
 }

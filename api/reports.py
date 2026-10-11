@@ -1,5 +1,5 @@
 import json
-import time
+import logging
 from collections.abc import Iterator
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -7,40 +7,30 @@ from fastapi.responses import StreamingResponse
 from sqlmodel import Session, select
 
 from api import db
-from api.contracts import IntakeInput, Report, ReportCreated, ReportSummary, StageEvent, UserOut
+from api.contracts import EngineResult, IntakeInput, Language, Report, ReportCreated, ReportSummary, StageEvent, UserOut
+from api.demo_seed import demo_explanation, is_demo
 from api.deps import current_user, get_session, require_user
-from api.settings import fixture
+from api.pipeline import run_pipeline
+from llm.explain import explain_report
 
 router = APIRouter(prefix="/api/reports", tags=["reports"])
-
-# shortcut: fixed pause between fixture stage events, real pacing comes from run_pipeline in V3
-STAGE_DELAY_S = 0.25
+log = logging.getLogger(__name__)
 
 
 def _sse(kind: str, data: str) -> str:
     return f"event: {kind}\ndata: {data}\n\n"
 
 
-def _run_stages(report_id: str, intake: IntakeInput) -> Iterator[StageEvent]:
-    """Fixture stand-in for the pipeline: the canned stage events, paced."""
-    # shortcut: V3 swaps this body for `yield from run_pipeline(report_id, intake)` (api/pipeline.py)
-    for event in fixture("stage_events.json"):
-        yield StageEvent.model_validate(event)
-        time.sleep(STAGE_DELAY_S)
-
-
-def _play_and_store(row: db.Report, session: Session, demo: dict) -> Iterator[str]:
-    """Streams each stage as it runs, then stores the events, engine result and explanation on the report."""
-    # shortcut: no `error` event or `failed` status yet (fixtures can't fail); V3's run_pipeline adds both
-    stages = []
-    for event in _run_stages(row.id, IntakeInput.model_validate(row.input)):
-        stages.append(event.model_dump(mode="json"))
-        yield _sse("stage", event.model_dump_json())
-    # shortcut: result and explanation are the fixture's; V3's run_pipeline stores the real ones itself
-    row.stages, row.engine, row.explanation, row.status = stages, demo["engine"], demo["explanation"], "done"
-    session.add(row)
-    session.commit()
-    yield _sse("done", json.dumps({"report_id": row.id}))
+def _play(report_id: str, intake: IntakeInput) -> Iterator[str]:
+    """Runs the real pipeline (it stores stages, engine result and explanation itself) and streams each stage."""
+    try:
+        for event in run_pipeline(report_id, intake):
+            yield _sse("stage", event.model_dump_json())
+    except Exception:
+        log.exception("pipeline failed for report %s", report_id)
+        yield _sse("error", json.dumps({"report_id": report_id}))
+        return
+    yield _sse("done", json.dumps({"report_id": report_id}))
 
 
 def _replay(row: db.Report) -> Iterator[str]:
@@ -87,8 +77,7 @@ def list_reports(user: UserOut = Depends(require_user), session: Session = Depen
     rows = session.exec(
         select(db.Report).where(db.Report.owner_id == user.id).order_by(db.Report.created_at.desc())
     ).all()
-    # shortcut: village names come from the fixture localities, V3 reads them through the data loaders
-    names = {v["code"]: v["name"] for v in fixture("localities.json")["villages"]}
+    names = {v.code: v.name for v in session.exec(select(db.Village)).all()}
     return [
         ReportSummary(
             id=row.id,
@@ -114,10 +103,39 @@ def stream_report(
     row = _readable_row(report_id, user, session)
     if row.status == "done":
         return StreamingResponse(_replay(row), media_type="text/event-stream")
-    # shortcut: two streams opened at once on a pending report both run and the last write wins;
-    # claim the row with status "running" if V3's live pipeline makes that costly
-    demo = fixture("report.json")  # loaded before the 200 goes out, so USE_FIXTURES=0 stays a clean 501
-    return StreamingResponse(_play_and_store(row, session, demo), media_type="text/event-stream")
+    # shortcut: two streams opened at once on a pending report both run and the last write wins
+    return StreamingResponse(_play(row.id, IntakeInput.model_validate(row.input)), media_type="text/event-stream")
+
+
+@router.post("/{report_id}/explanation", response_model=Report)
+def rewrite_explanation(
+    report_id: str,
+    language: Language | None = None,
+    user: UserOut | None = Depends(current_user),
+    session: Session = Depends(get_session),
+):
+    """Writes the explanation again from the stored engine result; the numbers never change.
+
+    `language` (optional) writes it in another language, e.g. after the Entrepreneur switches language on the report page.
+    """
+    row = _readable_row(report_id, user, session)
+    if row.engine is None:
+        raise HTTPException(409, "report has no engine result yet")
+    intake = IntakeInput.model_validate(row.input)
+    result = EngineResult.model_validate(row.engine)
+    try:
+        if is_demo(report_id):  # the seeded demo reports carry hardcoded text in every language, no LLM call
+            explanation = demo_explanation(report_id, language or intake.language, result.figures)
+        else:
+            explanation = explain_report(result, language or intake.language)
+    except Exception:
+        log.exception("explain_report failed for report %s", report_id)
+        raise HTTPException(503, "explanation unavailable")
+    if explanation.available:
+        row.explanation = explanation.model_dump(mode="json")
+        session.add(row)
+        session.commit()
+    return _to_contract(row)
 
 
 @router.get("/{report_id}", response_model=Report)

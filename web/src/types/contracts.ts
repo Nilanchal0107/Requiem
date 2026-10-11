@@ -178,6 +178,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/reports/{report_id}/explanation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Rewrite Explanation
+         * @description Writes the explanation again from the stored engine result; the numbers never change.
+         *
+         *     `language` (optional) writes it in another language, e.g. after the Entrepreneur switches language on the report page.
+         */
+        post: operations["rewrite_explanation_api_reports__report_id__explanation_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/reports/{report_id}": {
         parameters: {
             query?: never;
@@ -1196,6 +1218,39 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["StageEvent"];
                     "text/event-stream": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    rewrite_explanation_api_reports__report_id__explanation_post: {
+        parameters: {
+            query?: {
+                language?: ("en" | "hi" | "mr") | null;
+            };
+            header?: never;
+            path: {
+                report_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Report"];
                 };
             };
             /** @description Validation Error */

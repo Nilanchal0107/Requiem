@@ -3,5 +3,8 @@
   "common.account": "Account",
   "common.myReports": "My Reports",
   "common.logOut": "Log out",
-  "common.logInToSave": "Log in to save reports"
+  "common.logInToSave": "Log in to save reports",
+  "common.newDpr": "New DPR",
+  "common.home": "Home",
+  "common.profile": "Profile"
 }

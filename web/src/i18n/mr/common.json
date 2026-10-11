@@ -3,5 +3,8 @@
   "common.account": "खाते",
   "common.myReports": "माझे अहवाल",
   "common.logOut": "लॉग आउट",
-  "common.logInToSave": "अहवाल जतन करण्यासाठी लॉग इन करा"
+  "common.logInToSave": "अहवाल जतन करण्यासाठी लॉग इन करा",
+  "common.newDpr": "नवीन DPR बनवा",
+  "common.home": "मुख्यपान",
+  "common.profile": "प्रोफाइल"
 }

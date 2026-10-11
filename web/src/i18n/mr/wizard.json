@@ -96,5 +96,9 @@
   "wizard.describe.placeholder": "उदा. मला माझ्या गावात ५ जनावरांसह डेअरी सुरू करायची आहे.",
   "wizard.describe.go": "फॉर्म भरा",
   "wizard.describe.error": "आम्हाला हे वाचता आले नाही. कनेक्शन तपासा आणि पुन्हा प्रयत्न करा.",
-  "wizard.describe.missing": "अजून हवे: {fields}"
+  "wizard.describe.missing": "अजून हवे: {fields}",
+  "wizard.describe.speak": "बोला",
+  "wizard.describe.stop": "थांबवा",
+  "wizard.describe.hearing": "ऐकत आहोत…",
+  "wizard.describe.voiceError": "आम्हाला ऐकू आले नाही. माइकला परवानगी द्या किंवा लिहा."
 }

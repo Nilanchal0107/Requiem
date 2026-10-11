@@ -1,23 +1,33 @@
-from fastapi import APIRouter, HTTPException
+import logging
 
-from api.contracts import ChatRequest, ChatResponse, Change, Citation
-from api.settings import fixture
+from fastapi import APIRouter, Depends, HTTPException
+from sqlmodel import Session
+
+from api import db, live
+from api.contracts import ChatRequest, ChatResponse, IntakeInput
+from api.deps import get_session
+from api.reports import _to_contract
+from llm.chat import chat as run_chat
 
 router = APIRouter(prefix="/api", tags=["chat"])
+log = logging.getLogger(__name__)
 
 
-# shortcut: one canned answer for the fixture report only, any other report id is 404; V2 runs the LLM tool loop
 @router.post("/chat", response_model=ChatResponse)
-def chat(body: ChatRequest):
-    report = fixture("report.json")
-    if body.report_id != report["id"]:
+def chat(body: ChatRequest, session: Session = Depends(get_session)):
+    row = session.get(db.Report, body.report_id)
+    if row is None or row.engine is None:
         raise HTTPException(404, "report not found")
-    scheme = fixture("schemes.json")[0]
-    return ChatResponse(
-        reply="Your funding gap is {{funding_gap}}. Borrowing less lowers your EMI.",
-        citations=[Citation(scheme_id=scheme["id"], source_url=scheme["source_url"], snippet=scheme["covers"])],
-        suggested_changes=[
-            Change(field="own_contribution", from_value=report["input"]["own_contribution"], to_value=140000, resulting_verdict="feasible")
-        ],
-        tools_used=["get_dpr", "search_schemes"],
-    )
+    report = _to_contract(row)
+    intake = IntakeInput.model_validate(row.input)
+    try:
+        return run_chat(
+            report, body.message, body.history[-10:], body.language,
+            index=live.scheme_index(),
+            what_if=lambda changes: live.engine_for(live.apply_changes(intake, changes), session, with_path_to_yes=False),
+        )
+    except HTTPException:
+        raise
+    except Exception:
+        log.exception("chat failed for report %s", body.report_id)
+        raise HTTPException(503, "chat unavailable, the report numbers are complete")

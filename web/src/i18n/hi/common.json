@@ -3,5 +3,8 @@
   "common.account": "खाता",
   "common.myReports": "मेरी रिपोर्ट",
   "common.logOut": "लॉग आउट",
-  "common.logInToSave": "रिपोर्ट सहेजने के लिए लॉग इन करें"
+  "common.logInToSave": "रिपोर्ट सहेजने के लिए लॉग इन करें",
+  "common.newDpr": "नई DPR बनाएँ",
+  "common.home": "होम",
+  "common.profile": "प्रोफ़ाइल"
 }

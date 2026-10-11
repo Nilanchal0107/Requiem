@@ -1,4 +1,4 @@
-"""The real pipeline driver. Not reachable while USE_FIXTURES=1; V3 swaps it into api/reports.py `_run_stages`."""
+"""The real pipeline driver behind GET /api/reports/{id}/stream (api/reports.py `_play`)."""
 import logging
 import time
 from collections.abc import Iterator
@@ -9,6 +9,7 @@ from sqlmodel import Session
 from api import db
 from api.contracts import Explanation, IntakeInput, Language, StageEvent, Swot
 from data.loaders import load_archetypes, load_schemes
+from data.osm_live import live_osm_counts
 from engine import run_engine
 from llm.explain import explain_report
 
@@ -34,7 +35,7 @@ def run_pipeline(report_id: str, intake: IntakeInput) -> Iterator[StageEvent]:
     sets the report `failed` and re-raises so the route can send `error`. An LLM failure yields a `failed`
     explanation stage, stores an unavailable Explanation, and still finishes `done`.
     """
-    with Session(db.engine) as session:
+    with Session(db.engine, expire_on_commit=False) as session:  # emit() commits per stage; rows must stay loaded
         row = session.get(db.Report, report_id)
         if row is None:
             raise LookupError(f"unknown report {report_id}")  # the stream route 404s before calling this
@@ -62,11 +63,17 @@ def run_pipeline(report_id: str, intake: IntakeInput) -> Iterator[StageEvent]:
             stage = "market"
             yield emit(stage, "running", message="Checking the Locality")
             started = time.perf_counter()
+            arch_dict = archetype.model_dump(mode="json")
+            village_dict = village.model_dump()
+            live = live_osm_counts(village_dict, arch_dict)
+            if live:  # keep the DB row in step with data/osm/niphad_counts.json; seeded counts stay when the fetch fails
+                village.osm_counts = village_dict["osm_counts"] = {**village.osm_counts, **live}
+                session.add(village)
             result = run_engine(
                 intake,
-                archetype.model_dump(mode="json"),
+                arch_dict,
                 [s.model_dump(mode="json") for s in schemes],
-                village.model_dump(),
+                village_dict,
                 current_year=date.today().year,
             )
             yield emit(stage, "done", started, ["Census 2011", "OpenStreetMap", "archetypes.json (assumptions)"])

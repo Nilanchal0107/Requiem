@@ -17,6 +17,7 @@ export const router = createBrowserRouter([
       { path: "reports/:id", lazy: page(() => import("@/pages/Report")) },
       { path: "compare", lazy: page(() => import("@/pages/Compare")) },
       { path: "reports", lazy: page(() => import("@/pages/MyReports")) },
+      { path: "profile", lazy: page(() => import("@/pages/Profile")) },
       { path: "*", lazy: page(() => import("@/pages/NotFound")) },
     ],
   },

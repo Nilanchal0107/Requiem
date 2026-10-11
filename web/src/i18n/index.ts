@@ -51,7 +51,11 @@ export function useLang(): Lang {
   );
 }
 
-export function useT(): (key: string) => string {
+// `fallback` is shown when no language has the key: labels that arrive in English from data/ use it.
+export function useT(): (key: string, fallback?: string) => string {
   const lang = useLang();
-  return (key) => translate(catalogs, lang, key);
+  return (key, fallback) => {
+    const text = translate(catalogs, lang, key);
+    return text === key && fallback !== undefined ? fallback : text;
+  };
 }
