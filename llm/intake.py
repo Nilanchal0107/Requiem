@@ -5,7 +5,7 @@ from api.contracts import IntakeParseRequest, IntakeParseResponse
 
 
 def parse_intake(request: IntakeParseRequest, archetype_ids: list[str]) -> IntakeParseResponse:
-    """LLM (temperature 0, json) extracts fields from free text. Unknown archetypes are dropped.
+    """LLM (TRD §6.4; temperature 0, json) extracts fields from free text. Unknown archetypes are dropped.
 
     `missing` is filled by `missing_fields`, never by the model. V2 must add at least one assert check.
     """

@@ -5,7 +5,7 @@ from api.contracts import Citation
 
 
 class SchemeIndex:
-    """Chunks `texts_dir/*.md` by `##` heading and indexes them in memory with BM25Okapi.
+    """Chunks `texts_dir/*.md` by `##` heading and indexes them in memory with BM25Okapi (TRD §6.6).
 
     `source_urls` maps scheme_id to the `source_url` from schemes.json. The caller passes it in, because
     `llm` may not import `data`.

@@ -24,7 +24,7 @@ def chat(
     index: SchemeIndex,
     what_if: WhatIf,
 ) -> ChatResponse:
-    """Tool loop of at most 3 rounds over get_dpr, search_schemes and simulate, then the verifier on the reply.
+    """Tool loop (TRD §6.5, §4.4) of at most 3 rounds over get_dpr, search_schemes and simulate, then the verifier on the reply.
 
     Simulate figures get the `sim.` prefix in `ChatResponse.figures`. Each simulate result becomes a
     `suggested_changes` entry. V2 must add at least one assert check.
@@ -33,7 +33,7 @@ def chat(
 
 
 def tool_get_dpr(engine: EngineResult, section: str) -> dict[str, Any]:
-    """Return one part of the stored EngineResult (e.g. market, cost, schemes, finance, verdict).
+    """Return one part of the stored EngineResult (TRD §6.5; e.g. market, cost, schemes, finance, verdict).
 
     V2 must add at least one assert check.
     """
@@ -41,7 +41,7 @@ def tool_get_dpr(engine: EngineResult, section: str) -> dict[str, Any]:
 
 
 def tool_simulate(what_if: WhatIf, changes: list[Change]) -> EngineResult:
-    """Run the what-if with `changes` applied. The caller reads `.verdict` for `resulting_verdict`.
+    """Run the what-if with `changes` applied (TRD §6.5, simulate tool). The caller reads `.verdict` for `resulting_verdict`.
 
     V2 must add at least one assert check.
     """

@@ -20,7 +20,7 @@ class VerifyResult:
 
 
 def verify(text: str, figures: dict[str, Figure]) -> VerifyResult:
-    """Check every `{{id}}` against `figures` (keys may be namespaced, e.g. `dairy.min_dscr`), then scan the
+    """Check every `{{id}}` against `figures` (TRD §6.3, steps 1–2) (keys may be namespaced, e.g. `dairy.min_dscr`), then scan the
     text with placeholders removed for raw digits (TRD §6.3 steps 1–2). Splits into sentences for `offending`.
     V2 must add at least one assert check.
     """
