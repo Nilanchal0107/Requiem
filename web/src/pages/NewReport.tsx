@@ -17,15 +17,13 @@ const NAVIGATE_DELAY_MS = 600
 export default function NewReport() {
   const t = useT()
   const navigate = useNavigate()
-  const { start, events, reportId, failed } = useReportStream()
+  const { start, events, reportId, failed, busy } = useReportStream()
 
   useEffect(() => {
     if (!reportId) return
     const timer = setTimeout(() => navigate(`/reports/${reportId}`), NAVIGATE_DELAY_MS)
     return () => clearTimeout(timer)
   }, [reportId, navigate])
-
-  const running = events.length > 0 && !failed && !reportId
 
   return (
     <div className="flex flex-col gap-6">
@@ -37,7 +35,7 @@ export default function NewReport() {
       <StepMoney />
       <StepAboutYou />
 
-      <Button onClick={() => start(CANNED_INTAKE)} disabled={running}>
+      <Button onClick={() => start(CANNED_INTAKE)} disabled={busy}>
         {t("wizard.start")}
       </Button>
 

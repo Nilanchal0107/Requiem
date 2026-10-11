@@ -41,26 +41,54 @@ export function useReportStream() {
   const [events, setEvents] = useState<StageEvent[]>([])
   const [reportId, setReportId] = useState<string | null>(null)
   const [failed, setFailed] = useState(false)
+  const [busy, setBusy] = useState(false)
+  // Refs, not state: the guard must see a second click before the re-render lands.
+  const live = useRef(false)
+  const mounted = useRef(true)
   const close = useRef<() => void>(() => {})
 
-  useEffect(() => () => close.current(), [])
+  useEffect(() => {
+    mounted.current = true
+    return () => {
+      mounted.current = false
+      close.current()
+    }
+  }, [])
+
+  function finish() {
+    live.current = false
+    setBusy(false)
+  }
 
   async function start(intake: IntakeInput) {
+    if (live.current) return
+    live.current = true
     close.current()
+    setBusy(true)
     setEvents([])
     setReportId(null)
     setFailed(false)
     try {
       const id = await createReport(intake)
-      close.current = openReportStream(id, {
+      const stop = openReportStream(id, {
         onStage: (event) => setEvents((prev) => [...prev, event]),
-        onDone: setReportId,
-        onError: () => setFailed(true),
+        onDone: (done) => {
+          finish()
+          setReportId(done)
+        },
+        onError: () => {
+          finish()
+          setFailed(true)
+        },
       })
+      // Unmounted while the POST was in flight: nothing will close this stream, so close it now.
+      if (mounted.current) close.current = stop
+      else stop()
     } catch {
+      finish()
       setFailed(true)
     }
   }
 
-  return { start, events, reportId, failed }
+  return { start, events, reportId, failed, busy }
 }
