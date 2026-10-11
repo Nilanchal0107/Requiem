@@ -6,7 +6,7 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** done
 
 ## Notes
 
@@ -15,9 +15,17 @@
 
 ## Acceptance criteria
 
-- [ ] Valid placeholders pass.
-- [ ] An ASCII digit outside a placeholder fails.
-- [ ] A Devanagari digit outside a placeholder fails.
-- [ ] An unknown id fails.
-- [ ] Namespaced Comparison ids and dotted group ids resolve.
-- [ ] The verifier test file passes.
+- [x] Valid placeholders pass.
+- [x] An ASCII digit outside a placeholder fails.
+- [x] A Devanagari digit outside a placeholder fails.
+- [x] An unknown id fails.
+- [x] Namespaced Comparison ids and dotted group ids resolve.
+- [x] The verifier test file passes.
+
+## Comments
+
+- Implemented `verify(text, figures)` in `llm/verifier.py` with `_split_sentences` masking placeholders so internal dots (`dairy.min_dscr`) do not cause spurious sentence splits.
+- Checked placeholders against `figures` and scanned residual text for ASCII (`[0-9]`) and Devanagari (`[०-९]`) digits.
+- Unskipped and expanded `tests/test_verifier.py` to cover valid placeholders, ASCII digits, Devanagari digits, unknown IDs, namespaced Comparison IDs, dotted group IDs, and multi-sentence texts.
+- All 7 tests in `tests/test_verifier.py` pass.
+
