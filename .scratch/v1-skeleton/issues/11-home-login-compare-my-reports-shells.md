@@ -28,7 +28,7 @@
 
 ## Comments
 
-- **Code commit:** see `git log` for the `V1-11` commit that carries this update.
+- **Code commit:** `34761da` (V1-11: home, login, compare and my reports shells).
 - **Verified:** `npm run build` passes; `npm run check` passes (new asserts for `login`, `listReports`, `useCompare` POST). Python suite 86 passed, 5 skipped. Through the Vite proxy with the real API: guest `/api/auth/me` returns `user: null`, guest `/api/reports` returns 401, login sets the session, reports return one row after login, compare returns the summary, logout clears the session.
 - **Not verified in a browser:** the three UI criteria (signed-in state after reload, `/compare` render, `/reports` guest then row). The data paths behind them are checked above; a visual pass is still open.
 - **Deviations from the ticket:**
