@@ -26,7 +26,7 @@
 
 ## Comments
 
-- Built with tests first in `tests/test_api_smoke.py` (4 new tests plus the stream test, 19 in the file). Full suite 34 passing. Pyright on `api/reports.py` and `api/pipeline.py`: 0 errors. No project typechecker is configured; pyright was run ad hoc via `uvx` against `.venv`.
+- Done in `a5bf637`. Built with tests first in `tests/test_api_smoke.py` (4 new tests plus the stream test, 19 in the file). Full suite 34 passing. Pyright on `api/reports.py` and `api/pipeline.py`: 0 errors. No project typechecker is configured; pyright was run ad hoc via `uvx` against `.venv`.
 - **Code review (Standards and Spec, parallel sub-agents):** no hard violations; no missing or partial requirements. Applied: `_demo_report()` helper (dedupes the fixture load), `_replay` renamed `_replay_fixture_stages`, and a typing fix (`engine` is optional, so `verdict` is `None` when absent).
 - **Deferred:** `list_reports` uses `next(...)` with no default, so an unknown village code gives a 500. Not reachable with the fixture; V2 reads the village from the DB. `_replay_fixture_stages` sleeps after the last event too, so `done` arrives about 0.25 s late. `run_pipeline` is a plain function that raises on call, not a generator; V2 makes it one. The mixed serialization (`model_dump_json` for stages, `json.dumps` for `done`) is kept.
 - **Contract:** no model changed, so `api/contracts.py` and `web/src/types/contracts.ts` are untouched.
