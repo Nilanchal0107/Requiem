@@ -221,8 +221,12 @@ assert.deepEqual(loadDraft(store), EMPTY_DRAFT, "a corrupt draft starts fresh");
 assert.equal(safeNext("/reports/r-1?tab=bank"), "/reports/r-1?tab=bank");
 for (const bad of [null, "", "https://evil.example", "//evil.example", "/\\evil.example", "reports"]) assert.equal(safeNext(bad), "/");
 
-// Declared stubs: the V2 hooks throw "not implemented" until their ticket.
-assert.throws(() => useChat(), /not implemented/);
+// useChat: POSTs one Ask turn to /api/chat and returns the ChatResponse.
+reply = new Response(JSON.stringify({ reply: "Gap is {{funding_gap}}" }), { status: 200, headers: { "content-type": "application/json" } });
+const chatRequest = { report_id: "r-1", message: "why?", language: "en", history: [] } as never;
+assert.deepEqual(await useChat()(chatRequest), { reply: "Gap is {{funding_gap}}" });
+assert.equal(seen.at(-1)!.url, "/api/chat");
+assert.equal(seen.at(-1)!.init.body, JSON.stringify(chatRequest));
 
 console.log("plumbing checks passed");
 

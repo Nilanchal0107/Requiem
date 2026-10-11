@@ -119,7 +119,16 @@ export default function Report() {
       </BottomActionBar>
       <FigureSheet figure={shown?.figure ?? null} lang={shown?.lang ?? lang} open={figureOpen} onOpenChange={setFigureOpen} />
       <WhatIfSheet open={whatIfOpen} onOpenChange={setWhatIfOpen} report={report} change={whatIfChange} />
-      <ChatSheet open={chatOpen} onOpenChange={setChatOpen} />
+      <ChatSheet
+        open={chatOpen}
+        onOpenChange={setChatOpen}
+        report={report}
+        onOpenFigure={openFigure}
+        onTry={(change) => {
+          setChatOpen(false)
+          openWhatIf(change)
+        }}
+      />
     </div>
   )
 }

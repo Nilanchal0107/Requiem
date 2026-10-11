@@ -24,14 +24,18 @@ export type ExplanationTabProps = {
 }
 
 // The numbers in a Path to Yes card come straight from the engine, so they are formatted here, never written by the LLM.
+export function changeText(c: Change, t: (key: string) => string, lang: Lang): string {
+  const unit = c.field === "own_contribution" ? "INR" : "count"
+  return t(`report.path.${c.field}`)
+    .replace("{delta}", formatValue(c.to_value - c.from_value, "INR", lang))
+    .replace("{from}", formatValue(c.from_value, unit, lang))
+    .replace("{to}", formatValue(c.to_value, unit, lang))
+}
+
 function PathToYes({ changes, onTry }: { changes: Change[]; onTry: (change: Change) => void }) {
   const t = useT()
   const lang = useLang()
-  const text = (c: Change) =>
-    t(`report.path.${c.field}`)
-      .replace("{delta}", formatValue(c.to_value - c.from_value, "INR", lang))
-      .replace("{from}", formatValue(c.from_value, c.field === "own_contribution" ? "INR" : "count", lang))
-      .replace("{to}", formatValue(c.to_value, c.field === "own_contribution" ? "INR" : "count", lang))
+  const text = (c: Change) => changeText(c, t, lang)
   return (
     <section id="path-to-yes" className="flex scroll-mt-20 flex-col gap-2">
       <h2 className="text-base font-semibold">{t("report.path.title")}</h2>

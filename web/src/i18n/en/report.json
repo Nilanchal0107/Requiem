@@ -81,5 +81,14 @@
   "report.whatIf.schemeChanged": "A different scheme fits now: {to}",
   "report.whatIf.verdictChanged": "The answer changes to: {to}",
   "report.whatIf.failed": "Could not update the numbers. Try again.",
-  "report.whatIf.makeFailed": "Could not make the new report. Try again."
+  "report.whatIf.makeFailed": "Could not make the new report. Try again.",
+  "report.chat.starter.1": "Why is my verdict like this?",
+  "report.chat.starter.2": "Which scheme is best for me?",
+  "report.chat.starter.3": "What if I put in more of my own money?",
+  "report.chat.placeholder": "Ask about your DPR",
+  "report.chat.send": "Send",
+  "report.chat.error": "We could not get an answer. Check your connection and try again.",
+  "report.chat.source": "Source",
+  "report.chat.thinking": "Thinking…",
+  "report.chat.suggested": "You could try"
 }

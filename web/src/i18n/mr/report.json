@@ -68,5 +68,14 @@
   "report.whatIf.schemeChanged": "आता दुसरी योजना लागू होते: {to}",
   "report.whatIf.verdictChanged": "निकाल बदलून झाला: {to}",
   "report.whatIf.failed": "आकडे अपडेट करता आले नाहीत. पुन्हा प्रयत्न करा.",
-  "report.whatIf.makeFailed": "नवीन अहवाल बनवता आला नाही. पुन्हा प्रयत्न करा."
+  "report.whatIf.makeFailed": "नवीन अहवाल बनवता आला नाही. पुन्हा प्रयत्न करा.",
+  "report.chat.starter.1": "माझा निकाल असा का आहे?",
+  "report.chat.starter.2": "माझ्यासाठी कोणती योजना सर्वोत्तम आहे?",
+  "report.chat.starter.3": "मी स्वतःचे जास्त पैसे घातले तर?",
+  "report.chat.placeholder": "तुमच्या रिपोर्टबद्दल विचारा",
+  "report.chat.send": "पाठवा",
+  "report.chat.error": "उत्तर मिळाले नाही. कनेक्शन तपासा आणि पुन्हा प्रयत्न करा.",
+  "report.chat.source": "स्रोत",
+  "report.chat.thinking": "विचार करत आहोत…",
+  "report.chat.suggested": "तुम्ही हे करून पाहू शकता"
 }
