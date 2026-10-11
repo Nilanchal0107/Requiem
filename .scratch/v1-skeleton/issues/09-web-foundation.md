@@ -21,7 +21,7 @@
 
 ## Acceptance criteria
 
-- [ ] `npm install && npm run dev` serves the app; `npm run build` type-checks and succeeds.
+- [x] `npm install && npm run dev` serves the app; `npm run build` type-checks and succeeds.
 - [x] Each of the 6 routes renders its own `h1` through `t()`; an unknown route shows a not-found page.
 - [x] `fetch("/api/archetypes")` from the browser reaches FastAPI through the proxy (no CORS config).
 - [x] `web/src/types/contracts.ts` is imported by the API module and compiles; it is not edited.
