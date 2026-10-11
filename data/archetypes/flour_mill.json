@@ -1,0 +1,67 @@
+{
+  "id": "flour_mill",
+  "name": "Flour mill (atta chakki)",
+  "sector": "manufacturing",
+  "unit_label": "capacity (kg per hour)",
+  "unit_scale": { "default": 100, "min": 50, "max": 300, "step": 50 },
+  "eligibility_fields": ["age", "gender", "social_category", "education", "business_status", "prior_subsidy"],
+  "cost_items": [
+    {
+      "id": "mill",
+      "name": "Mill, motor and sieves",
+      "fixed": 0,
+      "per_unit": 1800,
+      "depreciation_pct": 10,
+      "note": "Per kg/hour of capacity, new machine, 2026 assumption"
+    },
+    {
+      "id": "shed_fit",
+      "name": "Shop and flooring",
+      "fixed": 50000,
+      "per_unit": 0,
+      "depreciation_pct": 10,
+      "note": "Small room fit-out, 2026 assumption"
+    },
+    {
+      "id": "electrical",
+      "name": "Electrical connection and wiring",
+      "fixed": 30000,
+      "per_unit": 0,
+      "depreciation_pct": 10,
+      "note": "Commercial connection and starter panel, 2026 assumption"
+    },
+    {
+      "id": "licences",
+      "name": "Licences and registration",
+      "fixed": 10000,
+      "per_unit": 0,
+      "depreciation_pct": 0,
+      "note": "Udyam and food licence, 2026 assumption"
+    }
+  ],
+  "working_capital_months": 1,
+  "revenue": {
+    "unit": "kg milled",
+    "output_per_unit_per_month": 200,
+    "price": 3,
+    "note": "8 hours a day, 26 days a month at full capacity; ₹3 per kg milling charge on customer-supplied grain, 2026 assumption"
+  },
+  "operating_cost": {
+    "variable_pct_of_revenue": 18,
+    "fixed_monthly": 5000,
+    "note": "Electricity and stone or sieve upkeep about 18% of revenue; fixed: helper and licence renewals ₹5000/month, 2026 assumption"
+  },
+  "ramp_up_months": 3,
+  "target_utilisation_pct": 45,
+  "growth_pct_per_year": 4,
+  "market": {
+    "mode": "local",
+    "aggregator": null,
+    "adoption_rate": 0.7,
+    "units_per_customer_per_month": 25,
+    "competitor_osm_tags": ["craft=grinding_mill", "shop=flour"],
+    "capacity_per_competitor": 9000
+  },
+  "channels": ["Walk-in households", "Shops needing packed flour", "Weekly market (haat)"],
+  "notes": "Manufacturing. Local mode: 70% of households mill about 25 kg of grain a month; a village mill handles about 9,000 kg a month. All 2026 assumptions."
+}

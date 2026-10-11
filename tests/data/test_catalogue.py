@@ -9,11 +9,12 @@ def test_load_archetypes_returns_expected_ids():
     ids = {a.id for a in archetypes}
     assert "dairy" in ids, "dairy archetype missing"
     assert "kirana" in ids, "kirana archetype missing"
+    assert {"onion_cultivation", "poultry", "tailoring", "flour_mill"} <= ids, "full catalogue archetype missing"
 
 
 def test_load_archetypes_count():
     archetypes = load_archetypes()
-    assert len(archetypes) == 2, f"Expected 2 archetypes, got {len(archetypes)}"
+    assert len(archetypes) == 6, f"Expected 6 archetypes, got {len(archetypes)}"
 
 
 def test_load_archetypes_validated_model():
@@ -32,11 +33,12 @@ def test_load_schemes_returns_expected_ids():
     assert "mudra" in ids, "mudra scheme missing"
     assert "pmegp" in ids, "pmegp scheme missing"
     assert "standup_india" in ids, "standup_india scheme missing"
+    assert {"kcc", "pm_vishwakarma", "cmegp"} <= ids, "full catalogue scheme missing"
 
 
 def test_load_schemes_count():
     schemes = load_schemes()
-    assert len(schemes) == 3, f"Expected 3 schemes, got {len(schemes)}"
+    assert len(schemes) == 6, f"Expected 6 schemes, got {len(schemes)}"
 
 
 def test_every_scheme_rule_has_source_url_and_verified_on():
@@ -52,6 +54,7 @@ def test_scheme_texts_loader():
     assert "mudra" in texts, "mudra scheme text missing"
     assert "pmegp" in texts, "pmegp scheme text missing"
     assert "standup_india" in texts, "standup_india scheme text missing"
+    assert {s.id for s in load_schemes()} == set(texts), "every Scheme needs a text and every text a Scheme"
     for scheme_id, text in texts.items():
         assert len(text) > 50, f"{scheme_id}: scheme text is too short"
 

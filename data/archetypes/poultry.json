@@ -1,0 +1,59 @@
+{
+  "id": "poultry",
+  "name": "Poultry (broiler)",
+  "sector": "allied",
+  "unit_label": "birds",
+  "unit_scale": { "default": 1000, "min": 500, "max": 5000, "step": 500 },
+  "eligibility_fields": ["age", "gender", "social_category", "education", "business_status", "prior_subsidy"],
+  "cost_items": [
+    {
+      "id": "shed",
+      "name": "Poultry shed",
+      "fixed": 0,
+      "per_unit": 350,
+      "depreciation_pct": 10,
+      "note": "About 1 sq ft per bird at ₹350 per sq ft, Nashik rural 2026 assumption"
+    },
+    {
+      "id": "equipment",
+      "name": "Feeders, drinkers and brooders",
+      "fixed": 0,
+      "per_unit": 60,
+      "depreciation_pct": 15,
+      "note": "Per bird of capacity, 2026 assumption"
+    },
+    {
+      "id": "water_power",
+      "name": "Water tank and lighting",
+      "fixed": 25000,
+      "per_unit": 0,
+      "depreciation_pct": 10,
+      "note": "One-time fitting, 2026 assumption"
+    }
+  ],
+  "working_capital_months": 2,
+  "revenue": {
+    "unit": "kg",
+    "output_per_unit_per_month": 1.1,
+    "price": 110,
+    "note": "About 1.8 kg live weight, 5% mortality, a batch every 6 weeks: about 1.1 kg per bird of capacity per month; ₹110 per kg live weight, 2026 assumption"
+  },
+  "operating_cost": {
+    "variable_pct_of_revenue": 82,
+    "fixed_monthly": 6000,
+    "note": "Chicks, feed, vaccines and medicines about 82% of revenue; fixed: labour and electricity ₹6000/month, 2026 assumption"
+  },
+  "ramp_up_months": 2,
+  "target_utilisation_pct": 85,
+  "growth_pct_per_year": 3,
+  "market": {
+    "mode": "local",
+    "aggregator": null,
+    "adoption_rate": 0.5,
+    "units_per_customer_per_month": 2,
+    "competitor_osm_tags": ["shop=butcher"],
+    "capacity_per_competitor": 600
+  },
+  "channels": ["Village chicken shops", "Weekly market (haat)", "Hotels and dhabas"],
+  "notes": "Agri-allied. Local mode: 50% of households buy chicken, about 2 kg a month; a chicken shop sells about 600 kg a month. All 2026 assumptions."
+}

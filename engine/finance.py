@@ -32,8 +32,27 @@ def build_loan_terms(principal: int, scheme: dict[str, Any], tenure_months: int 
     moratorium = int(loan_cfg.get("moratorium_months", 0))
     moratorium_mode = loan_cfg.get("moratorium_mode", "serviced")
     assert moratorium_mode in ("capitalised", "serviced")
+    repayment_mode = loan_cfg.get("repayment_mode", "emi")
+    assert repayment_mode in ("emi", "bullet")
 
     r = annual_rate / 12.0 / 100.0
+
+    if repayment_mode == "bullet" and principal > 0 and tenure > 0:
+        # KCC: nothing is paid until the last month, then principal and compounded interest at once (TRD §5.5).
+        # `emi` carries that single payment; there is no moratorium.
+        due = principal
+        for _ in range(tenure):
+            due += round(due * r)
+        return LoanTerms(
+            principal=principal,
+            interest_rate=annual_rate,
+            tenure_months=tenure,
+            moratorium_months=0,
+            moratorium_mode=moratorium_mode,
+            emi=due,
+            total_interest=due - principal,
+        )
+
     n = tenure - moratorium
 
     if principal == 0 or n <= 0:
@@ -109,6 +128,23 @@ def repayment_schedule(terms: LoanTerms, scheme: dict[str, Any], subsidy: int) -
 
     opening = terms.principal
     rows: list[RepaymentRow] = []
+
+    if scheme.get("loan", {}).get("repayment_mode") == "bullet":
+        for m in range(1, tenure + 1):
+            interest = round(opening * r)
+            last = m == tenure
+            rows.append(
+                RepaymentRow(
+                    month=m,
+                    opening=opening,
+                    interest=interest,
+                    principal=opening if last else 0,
+                    payment=opening + interest if last else 0,
+                    closing=0 if last else opening + interest,
+                )
+            )
+            opening += interest
+        return rows
 
     for m in range(1, tenure + 1):
         # Check backended subsidy at end of lock-in month
@@ -273,6 +309,8 @@ def build_means_of_finance(
     cost: CostBreakdown,
     best: SchemeOption | None,
     reg: FigureRegistry,
+    scheme: dict[str, Any] | None = None,
+    archetype: dict[str, Any] | None = None,
 ) -> MeansOfFinance:
     """Own Contribution, loan, subsidy and Funding Gap from the best Scheme (TRD §5.9).
 
@@ -315,18 +353,17 @@ def build_means_of_finance(
     if best is not None:
         loan_val = int(best.terms.principal)
         formula_loan = f"funding_gap (within {best.name} maximum)"
-        # Check subsidy: if MUDRA, type is none. If PMEGP, capital_backended.
-        # If principal and cost allow subsidy, e.g. for PMEGP:
-        # PMEGP has rates: 35% rural special_category, 25% rural general, 15% urban
-        if "pmegp" in best.scheme_id:
-            special_category = (
-                input.eligibility.gender in ("female", "other")
-                or input.eligibility.social_category in ("sc", "st", "obc")
-            )
-            pct = 35 if special_category else 25
+        # Capital subsidy comes from the Scheme's own `subsidy` block; an interest subvention is already in the loan rate.
+        sub_type = (scheme or {}).get("subsidy", {}).get("type", "none")
+        if scheme and archetype and sub_type in ("capital_backended", "capital_upfront"):
+            from engine.schemes import subsidy_pct
+
+            pct = subsidy_pct(input, archetype, scheme, project_cost)
             subsidy_val = round(project_cost * (pct / 100.0))
-            subsidy_backended = True
-            subsidy_note = f"{pct}% capital subsidy under PMEGP (back-ended, 36-month lock-in)"
+            subsidy_backended = sub_type == "capital_backended"
+            lock_in = int(scheme["subsidy"].get("lock_in_months", 0))
+            when = f" (back-ended, {lock_in}-month lock-in)" if subsidy_backended else ""
+            subsidy_note = f"{pct:g}% capital subsidy under {best.name}{when}"
         else:
             subsidy_val = 0
             subsidy_backended = False

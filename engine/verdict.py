@@ -22,6 +22,7 @@ def decide_verdict(
     min_dscr: Figure,
     payback: Figure,
     schemes: SchemeMatch,
+    revolving: bool = False,
 ) -> Verdict:
     """Four signals (dscr, market_gap, payback, scheme) and the worst level (TRD §5.7).
 
@@ -64,7 +65,7 @@ def decide_verdict(
         signals.append(VerdictSignal(name="market_gap", level=mg_lvl, figure_id=market.market_gap.id))
 
     # 3. Payback signal: <= loan tenure -> feasible; <= tenure + 12 months -> feasible_with_changes; longer -> not_feasible
-    tenure = schemes.best.terms.tenure_months if schemes.best else 60
+    tenure = schemes.best.terms.tenure_months if schemes.best and not revolving else 60
     pb_val = payback.value
     if pb_val <= tenure:
         pb_lvl = "feasible"

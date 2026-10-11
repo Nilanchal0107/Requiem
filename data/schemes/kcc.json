@@ -1,0 +1,40 @@
+{
+  "id": "kcc",
+  "name": "KCC (Kisan Credit Card, Modified Interest Subvention Scheme)",
+  "covers": "Short-term crop loans, and animal husbandry or fisheries loans, for farmers",
+  "sectors": ["agri", "allied"],
+  "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2131989",
+  "verified_on": "2026-10-11",
+  "rules": [
+    {
+      "field": "eligibility.farmland",
+      "op": "in",
+      "value": ["owned", "leased"],
+      "when": [{ "field": "sector", "op": "eq", "value": "agri" }],
+      "message": "Crop cultivation needs owned or leased farmland"
+    },
+    {
+      "field": "funding_gap",
+      "op": "lte",
+      "value": 200000,
+      "when": [{ "field": "sector", "op": "eq", "value": "allied" }],
+      "message": "The interest benefit on animal husbandry or fisheries loans applies up to ₹2 lakh"
+    }
+  ],
+  "own_contribution_pct": [{ "pct": 0 }],
+  "loan": {
+    "max": 300000,
+    "interest_rate": 7.0,
+    "rate_source": "scheme",
+    "max_tenure_months": 12,
+    "moratorium_months": 0,
+    "moratorium_mode": "serviced",
+    "repayment_mode": "bullet"
+  },
+  "tiers": [],
+  "subsidy": {
+    "type": "interest_subvention",
+    "lock_in_months": 0,
+    "rates": [{ "pct": 3 }]
+  }
+}

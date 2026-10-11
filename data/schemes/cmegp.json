@@ -1,0 +1,94 @@
+{
+  "id": "cmegp",
+  "name": "CMEGP (Maharashtra Chief Minister Employment Generation Programme)",
+  "covers": "New manufacturing, service and trade units in Maharashtra",
+  "sectors": ["allied", "service", "retail", "manufacturing"],
+  "source_url": "https://bankofmaharashtra.bank.in/cmegp",
+  "verified_on": "2026-10-11",
+  "rules": [
+    {
+      "field": "eligibility.age",
+      "op": "gte",
+      "value": 18,
+      "message": "Applicant must be 18 or older"
+    },
+    {
+      "field": "eligibility.age",
+      "op": "lte",
+      "value": 45,
+      "when": [
+        { "field": "eligibility.gender", "op": "ne", "value": "female" },
+        { "field": "eligibility.social_category", "op": "not_in", "value": ["sc", "st"] }
+      ],
+      "message": "Age limit is 45 years (50 for women and SC/ST applicants)"
+    },
+    {
+      "field": "eligibility.age",
+      "op": "lte",
+      "value": 50,
+      "message": "Age limit is 45 years (50 for women and SC/ST applicants)"
+    },
+    {
+      "field": "eligibility.business_status",
+      "op": "eq",
+      "value": "new",
+      "message": "Only new units are eligible — existing businesses do not qualify"
+    },
+    {
+      "field": "eligibility.prior_subsidy",
+      "op": "eq",
+      "value": false,
+      "message": "No earlier government subsidy for the same unit"
+    },
+    {
+      "field": "archetype_id",
+      "op": "not_in",
+      "value": ["dairy", "poultry"],
+      "message": "Animal husbandry (dairy, poultry) is on the CMEGP negative list"
+    },
+    {
+      "field": "project_cost",
+      "op": "lte",
+      "value": 5000000,
+      "when": [{ "field": "sector", "op": "eq", "value": "manufacturing" }],
+      "message": "Manufacturing projects must be within ₹50 lakh"
+    }
+  ],
+  "own_contribution_pct": [
+    { "pct": 5, "when": [{ "field": "eligibility.gender", "op": "eq", "value": "female" }] },
+    { "pct": 5, "when": [{ "field": "eligibility.social_category", "op": "in", "value": ["sc", "st"] }] },
+    { "pct": 10 }
+  ],
+  "loan": {
+    "max": 4750000,
+    "interest_rate": 10.0,
+    "rate_source": "assumption",
+    "max_tenure_months": 84,
+    "moratorium_months": 6,
+    "moratorium_mode": "serviced",
+    "repayment_mode": "emi"
+  },
+  "tiers": [],
+  "subsidy": {
+    "type": "capital_backended",
+    "lock_in_months": 36,
+    "rates": [
+      {
+        "pct": 35,
+        "when": [
+          { "field": "eligibility.gender", "op": "eq", "value": "female" },
+          { "field": "is_rural", "op": "eq", "value": true }
+        ]
+      },
+      {
+        "pct": 35,
+        "when": [
+          { "field": "eligibility.social_category", "op": "in", "value": ["sc", "st"] },
+          { "field": "is_rural", "op": "eq", "value": true }
+        ]
+      },
+      { "pct": 25, "when": [{ "field": "is_rural", "op": "eq", "value": true }] },
+      { "pct": 15 }
+    ]
+  }
+}

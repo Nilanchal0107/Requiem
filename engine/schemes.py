@@ -28,8 +28,12 @@ def _eval_condition(cond: dict[str, Any], context: dict[str, Any]) -> bool:
         return val is not None and val > target
     elif op == "lt":
         return val is not None and val < target
+    elif op == "ne":
+        return val != target
     elif op == "in":
         return val in target if isinstance(target, (list, tuple, set)) else False
+    elif op == "not_in":
+        return val not in target if isinstance(target, (list, tuple, set)) else False
     return False
 
 
@@ -37,6 +41,34 @@ def _eval_when(when_list: list[dict[str, Any]], context: dict[str, Any]) -> bool
     if not when_list:
         return True
     return all(_eval_condition(c, context) for c in when_list)
+
+
+def _context(input: IntakeInput, archetype: dict[str, Any], project_cost: int) -> dict[str, Any]:
+    """Fields a Scheme rule or `when` can address (TRD §4.2)."""
+    special_category = (
+        input.eligibility.gender in ("female", "other")
+        or input.eligibility.social_category in ("sc", "st", "obc")
+    )
+    return {
+        "eligibility": input.eligibility,
+        "input": input,
+        "archetype": archetype,
+        "archetype_id": archetype.get("id", input.archetype_id),
+        "sector": archetype.get("sector"),
+        "project_cost": project_cost,
+        "funding_gap": max(0, project_cost - input.own_contribution),
+        "special_category": special_category,
+        "is_rural": True,  # In Niphad villages / demo
+    }
+
+
+def subsidy_pct(input: IntakeInput, archetype: dict[str, Any], scheme: dict[str, Any], project_cost: int) -> float:
+    """First `subsidy.rates` entry whose `when` holds, else 0 (TRD §4.2). Pct of Project Cost, or rate points for a subvention."""
+    sub_cfg = scheme.get("subsidy", {})
+    if sub_cfg.get("type", "none") == "none":
+        return 0.0
+    ctx = _context(input, archetype, project_cost)
+    return next((float(r["pct"]) for r in sub_cfg.get("rates", []) if _eval_when(r.get("when", []), ctx)), 0.0)
 
 
 def match_schemes(
@@ -58,23 +90,7 @@ def match_schemes(
     from api.contracts import IneligibleScheme, SchemeOption
     from engine.finance import build_loan_terms
 
-    # Prepare context
-    special_category = (
-        input.eligibility.gender in ("female", "other")
-        or input.eligibility.social_category in ("sc", "st", "obc")
-    )
-    is_rural = True  # In Niphad villages / demo
-
-    ctx: dict[str, Any] = {
-        "eligibility": input.eligibility,
-        "input": input,
-        "archetype": archetype,
-        "archetype_id": archetype.get("id", input.archetype_id),
-        "sector": archetype.get("sector"),
-        "project_cost": project_cost,
-        "special_category": special_category,
-        "is_rural": is_rural,
-    }
+    ctx = _context(input, archetype, project_cost)
 
     funding_gap = max(0, project_cost - input.own_contribution)
 
@@ -101,17 +117,21 @@ def match_schemes(
 
         # 2. Evaluate rules
         failed_rule_msg = None
+        failed_rule: dict[str, Any] = {}
         for rule in scheme.get("rules", []):
             when_conds = rule.get("when", [])
             if _eval_when(when_conds, ctx):
                 if not _eval_condition(rule, ctx):
                     failed_rule_msg = rule.get("message", f"Failed condition on {rule.get('field')}")
+                    failed_rule = rule
                     break
 
         if failed_rule_msg:
             # Check for unlock hint on project_cost / education
             unlock_hint = None
-            if "project_cost" in failed_rule_msg or "₹5 lakh" in failed_rule_msg:
+            if failed_rule.get("field") == "funding_gap" and failed_rule.get("op") in ("lte", "lt") and isinstance(failed_rule.get("value"), (int, float)):
+                unlock_hint = f"₹{ctx['funding_gap'] - int(failed_rule['value']):,} more Own Contribution"
+            elif "project_cost" in failed_rule_msg or "₹5 lakh" in failed_rule_msg:
                 unlock_hint = "Reduce project scale or choose an eligible trade"
             elif s_id == "standup_india" and project_cost < 1000000:
                 needed = 1000000 - project_cost
@@ -148,14 +168,8 @@ def match_schemes(
             continue
 
         # 4. Subsidy calculation
-        sub_cfg = scheme.get("subsidy", {})
-        sub_type = sub_cfg.get("type", "none")
-        sub_pct = 0
-        if sub_type != "none":
-            for r_entry in sub_cfg.get("rates", []):
-                if _eval_when(r_entry.get("when", []), ctx):
-                    sub_pct = r_entry["pct"]
-                    break
+        sub_type = scheme.get("subsidy", {}).get("type", "none")
+        sub_pct = subsidy_pct(input, archetype, scheme, project_cost)
 
         # Max subsidy or subsidy amount
         subsidy_amt = round(project_cost * (sub_pct / 100.0))
@@ -205,12 +219,17 @@ def match_schemes(
                 continue
 
         # Build loan terms
-        terms = build_loan_terms(principal, scheme, input.tenure_months)
+        # Interest subvention (KCC prompt-repayment incentive) lowers the rate the Entrepreneur pays.
+        terms_scheme = scheme
+        if sub_type == "interest_subvention" and sub_pct:
+            terms_scheme = {**scheme, "loan": {**loan_cfg, "interest_rate": max(0.0, float(loan_cfg["interest_rate"]) - sub_pct)}}
+        terms = build_loan_terms(principal, terms_scheme, input.tenure_months)
 
         # Calculate effective rate for ranking
         # TRD: "rate minus interest subvention, minus the annualised value of a capital subsidy over the tenure"
         tenure_years = terms.tenure_months / 12.0
-        annualised_sub_pct = (sub_pct / tenure_years) if (tenure_years > 0 and sub_pct > 0) else 0.0
+        is_capital = sub_type in ("capital_backended", "capital_upfront")
+        annualised_sub_pct = (sub_pct / tenure_years) if (is_capital and tenure_years > 0 and sub_pct > 0) else 0.0
         eff_rate = terms.interest_rate - annualised_sub_pct
 
         reasons = [
@@ -218,8 +237,10 @@ def match_schemes(
         ]
         if matched_tier_id:
             reasons.append(f"Funding Gap fits the {matched_tier_id.capitalize()} tier")
-        if sub_pct > 0:
+        if sub_pct > 0 and is_capital:
             reasons.append(f"{sub_pct}% capital subsidy under {s_name}")
+        elif sub_pct > 0:
+            reasons.append(f"{sub_pct}% interest subvention under {s_name}: rate {loan_cfg['interest_rate']}% falls to {terms.interest_rate}%")
 
         opt = SchemeOption(
             scheme_id=s_id,
@@ -233,8 +254,8 @@ def match_schemes(
         eligible_options.append(opt)
 
 
-    # Rank eligible options by effective_rate ascending
-    eligible_options.sort(key=lambda o: o.effective_rate)
+    # Rank by effective_rate; on a tie the lower rate actually paid wins (e.g. PM Vishwakarma's 5% over PMEGP's subsidy-adjusted 5.0).
+    eligible_options.sort(key=lambda o: (o.effective_rate, o.terms.interest_rate))
 
     best = eligible_options[0] if eligible_options else None
     alternatives = eligible_options[1:] if len(eligible_options) > 1 else []

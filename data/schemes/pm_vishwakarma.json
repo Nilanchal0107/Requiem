@@ -1,0 +1,50 @@
+{
+  "id": "pm_vishwakarma",
+  "name": "PM Vishwakarma",
+  "covers": "Traditional artisans in the listed trades, such as tailors",
+  "sectors": ["service"],
+  "source_url": "https://pmvishwakarma.gov.in/",
+  "verified_on": "2026-10-11",
+  "rules": [
+    {
+      "field": "eligibility.age",
+      "op": "gte",
+      "value": 18,
+      "message": "Applicant must be 18 or older"
+    },
+    {
+      "field": "eligibility.artisan_trade",
+      "op": "eq",
+      "value": true,
+      "message": "Applicant must work in one of the traditional trades on the PM Vishwakarma list"
+    },
+    {
+      "field": "archetype_id",
+      "op": "eq",
+      "value": "tailoring",
+      "message": "Only trades on the PM Vishwakarma list qualify; Tailoring (Darzi) is the listed trade in this catalogue"
+    },
+    {
+      "field": "eligibility.prior_subsidy",
+      "op": "eq",
+      "value": false,
+      "message": "No loan under a similar Central or State self-employment scheme (PMEGP, PM SVANidhi, Mudra) in the past 5 years"
+    }
+  ],
+  "own_contribution_pct": [{ "pct": 0 }],
+  "loan": {
+    "max": 100000,
+    "interest_rate": 5.0,
+    "rate_source": "scheme",
+    "max_tenure_months": 18,
+    "moratorium_months": 0,
+    "moratorium_mode": "serviced",
+    "repayment_mode": "emi"
+  },
+  "tiers": [],
+  "subsidy": {
+    "type": "none",
+    "lock_in_months": 0,
+    "rates": []
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "id": "onion_cultivation",
+  "name": "Onion cultivation",
+  "sector": "agri",
+  "unit_label": "acres",
+  "unit_scale": {
+    "default": 2,
+    "min": 1,
+    "max": 10,
+    "step": 1
+  },
+  "eligibility_fields": [
+    "age",
+    "gender",
+    "social_category",
+    "education",
+    "farmland"
+  ],
+  "cost_items": [
+    {
+      "id": "drip_irrigation",
+      "name": "Drip irrigation",
+      "fixed": 0,
+      "per_unit": 30000,
+      "depreciation_pct": 10,
+      "note": "Drip lines and filters per acre, after the usual state drip support, Nashik 2026 assumption"
+    },
+    {
+      "id": "tools",
+      "name": "Sprayer, crates and tools",
+      "fixed": 25000,
+      "per_unit": 0,
+      "depreciation_pct": 15,
+      "note": "The farmer already owns the pump set; 2026 assumption"
+    },
+    {
+      "id": "onion_storage",
+      "name": "Onion storage shed (kanda chal)",
+      "fixed": 0,
+      "per_unit": 20000,
+      "depreciation_pct": 5,
+      "note": "Ventilated shed for about 50 quintals per acre, Nashik 2026 assumption"
+    }
+  ],
+  "working_capital_months": 4,
+  "revenue": {
+    "unit": "quintals",
+    "output_per_unit_per_month": 10,
+    "price": 1400,
+    "note": "About 120 quintals per acre in a year, spread over 12 months here; ₹1,400 per quintal Lasalgaon APMC price, 2026 assumption"
+  },
+  "operating_cost": {
+    "variable_pct_of_revenue": 55,
+    "fixed_monthly": 1500,
+    "note": "Seedlings, fertiliser, pesticide, labour and irrigation about 55% of revenue; fixed: electricity and upkeep ₹1500/month, 2026 assumption"
+  },
+  "ramp_up_months": 4,
+  "target_utilisation_pct": 90,
+  "growth_pct_per_year": 3,
+  "market": {
+    "mode": "aggregator",
+    "aggregator": "Lasalgaon APMC onion market",
+    "adoption_rate": null,
+    "units_per_customer_per_month": null,
+    "competitor_osm_tags": [],
+    "capacity_per_competitor": null
+  },
+  "channels": [
+    "Lasalgaon APMC auction",
+    "Direct to traders",
+    "Farmer producer company"
+  ],
+  "notes": "Agriculture (crop). Aggregator mode: the APMC absorbs all output, so local household demand is not the constraint. Farmland (owned or leased) is not costed; KCC needs it. Prices swing a lot between seasons; all figures are 2026 assumptions."
+}

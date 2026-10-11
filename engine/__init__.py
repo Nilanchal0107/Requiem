@@ -39,7 +39,7 @@ def run_engine(
     match = match_schemes(input, archetype, schemes, project_cost)
     best = match.best
     best_scheme = next((s for s in schemes if best and s["id"] == best.scheme_id), None)
-    finance = build_means_of_finance(input, cost, best, reg)
+    finance = build_means_of_finance(input, cost, best, reg, best_scheme, archetype)
     schedule = (
         repayment_schedule(best.terms, best_scheme, int(finance.subsidy.value))
         if best and best_scheme
@@ -49,7 +49,8 @@ def run_engine(
     projections = project_years(input, archetype, market, cost, schedule)
     payback = payback_months(ops, project_cost, reg)
     dscr = min_dscr(projections, reg)
-    verdict = decide_verdict(archetype, market, dscr, payback, match)
+    revolving = bool(best_scheme and best_scheme.get("loan", {}).get("repayment_mode") == "bullet")
+    verdict = decide_verdict(archetype, market, dscr, payback, match, revolving)
     base = EngineResult(
         archetype_id=archetype["id"],
         village_code=village["code"],

@@ -1,14 +1,26 @@
 {
   "563424": {
     "dairy": 0,
-    "kirana": 12
+    "kirana": 12,
+    "onion_cultivation": 0,
+    "poultry": 6,
+    "tailoring": 5,
+    "flour_mill": 3
   },
   "563501": {
     "dairy": 0,
-    "kirana": 22
+    "kirana": 22,
+    "onion_cultivation": 0,
+    "poultry": 8,
+    "tailoring": 7,
+    "flour_mill": 4
   },
   "563455": {
     "dairy": 0,
-    "kirana": 4
+    "kirana": 4,
+    "onion_cultivation": 0,
+    "poultry": 3,
+    "tailoring": 2,
+    "flour_mill": 2
   }
 }

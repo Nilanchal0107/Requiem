@@ -26,3 +26,12 @@ def test_run_eval_scores_scheme_match_and_verifier_pass(monkeypatch):
     cases = [{"input": inp, "expected_scheme": "pmegp"}, {"input": inp, "expected_scheme": "mudra"}]
     out = ev.run_eval(cases, archetypes=[arch], schemes=schemes, villages={village["code"]: {**village, "osm_counts": {}}}, current_year=2026)
     assert out == {"scheme_match": 0.5, "verifier_pass": 1.0}
+
+
+def test_main_labels_every_catalogue_case_and_matches_all_of_them(monkeypatch, capsys):
+    monkeypatch.setattr(ev, "explain_report", lambda result, language: Explanation(
+        language=language, sections=[], swot=Swot(strengths=[], weaknesses=[], opportunities=[], threats=[]),
+        verified=1, total=1, regenerated=False, available=True))
+    ev.main()
+    out = capsys.readouterr().out
+    assert "cases: 36" in out and "scheme-match accuracy: 100%" in out and "verifier pass rate:    100%" in out

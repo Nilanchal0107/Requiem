@@ -1,0 +1,59 @@
+{
+  "id": "tailoring",
+  "name": "Tailoring",
+  "sector": "service",
+  "unit_label": "machines",
+  "unit_scale": { "default": 2, "min": 1, "max": 6, "step": 1 },
+  "eligibility_fields": ["age", "gender", "social_category", "education", "business_status", "prior_subsidy", "artisan_trade"],
+  "cost_items": [
+    {
+      "id": "machines",
+      "name": "Sewing machines",
+      "fixed": 0,
+      "per_unit": 12000,
+      "depreciation_pct": 15,
+      "note": "Good-quality new machine with table, Nashik 2026 assumption"
+    },
+    {
+      "id": "furniture",
+      "name": "Cutting table and furniture",
+      "fixed": 15000,
+      "per_unit": 0,
+      "depreciation_pct": 15,
+      "note": "2026 assumption"
+    },
+    {
+      "id": "shop_fit",
+      "name": "Shop fit-out",
+      "fixed": 20000,
+      "per_unit": 0,
+      "depreciation_pct": 20,
+      "note": "Counter, mirror, signage for a small shop, 2026 assumption"
+    }
+  ],
+  "working_capital_months": 2,
+  "revenue": {
+    "unit": "garments",
+    "output_per_unit_per_month": 60,
+    "price": 250,
+    "note": "About 2 garments per machine per day; ₹250 average stitching charge for blouse, shirt and alterations, 2026 assumption"
+  },
+  "operating_cost": {
+    "variable_pct_of_revenue": 25,
+    "fixed_monthly": 3500,
+    "note": "Thread, lining, buttons and helper pay about 25% of revenue; fixed: rent and electricity ₹3500/month, 2026 assumption"
+  },
+  "ramp_up_months": 3,
+  "target_utilisation_pct": 70,
+  "growth_pct_per_year": 5,
+  "market": {
+    "mode": "local",
+    "aggregator": null,
+    "adoption_rate": 0.4,
+    "units_per_customer_per_month": 1.5,
+    "competitor_osm_tags": ["craft=tailor", "shop=tailor"],
+    "capacity_per_competitor": 150
+  },
+  "channels": ["Walk-in customers", "Festival and wedding season orders", "School uniform orders"],
+  "notes": "Service sector; Tailor (Darzi) is a PM Vishwakarma trade. Local mode: 40% of households stitch something in a month, about 1.5 garments. All 2026 assumptions."
+}
