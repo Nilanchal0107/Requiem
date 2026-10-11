@@ -30,8 +30,30 @@ CREDS = {"username": "ramesh", "password": "secret1"}
 
 
 @pytest.fixture
-def client():
-    return TestClient(app)
+def db_engine(tmp_path):
+    from sqlmodel import create_engine
+
+    from api.db import create_tables
+
+    engine = create_engine(f"sqlite:///{tmp_path / 'test.db'}")
+    create_tables(engine)
+    return engine
+
+
+@pytest.fixture
+def client(db_engine):
+    """A fresh SQLite database per test, swapped in through the session dependency."""
+    from sqlmodel import Session
+
+    from api.deps import get_session
+
+    def session_override():
+        with Session(db_engine) as session:
+            yield session
+
+    app.dependency_overrides[get_session] = session_override
+    yield TestClient(app)
+    app.dependency_overrides.clear()
 
 
 def test_localities_three_shapes_validate_against_contract(client):
@@ -66,15 +88,17 @@ def test_schemes_validate(client):
 def test_login_then_me_then_logout(client):
     assert client.get("/api/auth/me").json() == {"user": None}
 
+    client.post("/api/auth/register", json=CREDS)
+    client.post("/api/auth/logout")
     login = client.post("/api/auth/login", json=CREDS)
     assert login.status_code == 200
     assert "session" in login.cookies or "session" in client.cookies
     assert UserOut.model_validate(login.json()).username
 
     me = MeOut.model_validate(client.get("/api/auth/me").json())
-    assert me.user is not None
+    assert me.user is not None and me.user.username == CREDS["username"]
 
-    out = client.post("/api/auth/logout")
+    out =client.post("/api/auth/logout")
     assert OkOut.model_validate(out.json()).ok is True
     assert client.get("/api/auth/me").json() == {"user": None}
 
@@ -110,13 +134,35 @@ def test_tables_are_created_on_startup(tmp_path, monkeypatch):
     assert {"user", "report", "village"} <= set(inspect(engine).get_table_names())
 
 
-def test_password_helpers_are_declared_but_not_implemented():
-    from api.auth import hash_password, verify_password
+def test_register_twice_is_409(client):
+    assert client.post("/api/auth/register", json=CREDS).status_code == 200
+    assert client.post("/api/auth/register", json=CREDS).status_code == 409
 
-    with pytest.raises(NotImplementedError):
-        hash_password("secret1")
-    with pytest.raises(NotImplementedError):
-        verify_password("secret1", "scrypt$00$00")
+
+def test_wrong_password_and_unknown_user_get_same_401(client):
+    client.post("/api/auth/register", json=CREDS)
+    client.post("/api/auth/logout")
+
+    wrong = client.post("/api/auth/login", json={**CREDS, "password": "wrong-one"})
+    unknown = client.post("/api/auth/login", json={"username": "nobody", "password": "secret1"})
+    assert wrong.status_code == unknown.status_code == 401
+    assert wrong.json() == unknown.json()
+    assert client.get("/api/auth/me").json() == {"user": None}
+
+
+def test_stored_password_is_scrypt_not_plain_text(client, db_engine):
+    from sqlmodel import Session, select
+
+    from api.auth import verify_password
+    from api.db import User
+
+    client.post("/api/auth/register", json=CREDS)
+    with Session(db_engine) as session:
+        stored = session.exec(select(User)).one().password_hash
+    assert stored != CREDS["password"] and stored.startswith("scrypt$")
+    assert verify_password(CREDS["password"], stored)
+    assert not verify_password("wrong-one", stored)
+    assert not verify_password(CREDS["password"], "not-a-hash")
 
 
 # --- V1-04: reports and SSE stream ------------------------------------------
@@ -180,7 +226,7 @@ def test_get_report_returns_fixture_under_requested_id(client):
 def test_list_reports_is_401_for_guest_and_one_summary_after_login(client):
     assert client.get("/api/reports").status_code == 401
 
-    client.post("/api/auth/login", json=CREDS)
+    client.post("/api/auth/register", json=CREDS)
     res = client.get("/api/reports")
     assert res.status_code == 200
     summaries = [ReportSummary.model_validate(s) for s in res.json()]

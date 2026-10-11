@@ -1,6 +1,15 @@
-from fastapi import Depends, HTTPException, Request
+from collections.abc import Iterator
 
+from fastapi import Depends, HTTPException, Request
+from sqlmodel import Session
+
+from api import db
 from api.contracts import UserOut
+
+
+def get_session() -> Iterator[Session]:
+    with Session(db.engine) as session:
+        yield session
 
 
 def current_user(request: Request) -> UserOut | None:
