@@ -6,6 +6,7 @@ import { ApiError, getReport, login, listReports, request } from "../src/api.ts"
 import { parseTab } from "../src/pages/report/tab.ts";
 import { formatCompact, formatDate, formatFigure, formatHeadline, formatInr, formatMoneyWords } from "../src/lib/format.ts";
 import { whatChanged, worstSignal } from "../src/lib/verdict.ts";
+import { safeNext } from "../src/lib/next.ts";
 import { shareLink } from "../src/lib/share.ts";
 import { useSimulate } from "../src/hooks/useSimulate.ts";
 import { useChat } from "../src/hooks/useChat.ts";
@@ -215,6 +216,10 @@ clearDraft(store);
 assert.deepEqual(loadDraft(store), EMPTY_DRAFT);
 mem.set("requiem.wizardDraft", "{broken");
 assert.deepEqual(loadDraft(store), EMPTY_DRAFT, "a corrupt draft starts fresh");
+
+// safeNext: only same-site paths survive; anything else falls back to home.
+assert.equal(safeNext("/reports/r-1?tab=bank"), "/reports/r-1?tab=bank");
+for (const bad of [null, "", "https://evil.example", "//evil.example", "/\\evil.example", "reports"]) assert.equal(safeNext(bad), "/");
 
 // Declared stubs: the V2 hooks throw "not implemented" until their ticket.
 assert.throws(() => useChat(), /not implemented/);

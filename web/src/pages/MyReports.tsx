@@ -24,7 +24,7 @@ export default function MyReports() {
       {guest && (
         <div className="flex flex-col items-start gap-2">
           <p>{t("reports.guest")}</p>
-          <Link className="text-primary underline" to="/login">
+          <Link className="text-primary underline" to="/login?next=/reports">
             {t("reports.logIn")}
           </Link>
         </div>

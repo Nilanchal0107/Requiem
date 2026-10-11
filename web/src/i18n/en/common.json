@@ -1,3 +1,7 @@
 {
-  "common.notFound.title": "Page not found"
+  "common.notFound.title": "Page not found",
+  "common.account": "Account",
+  "common.myReports": "My Reports",
+  "common.logOut": "Log out",
+  "common.logInToSave": "Log in to save reports"
 }

@@ -1,1 +1,7 @@
-{}
+{
+  "common.notFound.title": "पेज नहीं मिला",
+  "common.account": "खाता",
+  "common.myReports": "मेरी रिपोर्ट",
+  "common.logOut": "लॉग आउट",
+  "common.logInToSave": "रिपोर्ट सहेजने के लिए लॉग इन करें"
+}

@@ -5,6 +5,9 @@
   "login.logIn": "Log in",
   "login.register": "Register",
   "login.guest": "Continue without account",
-  "login.signedIn": "Signed in as",
-  "login.logOut": "Log out"
+  "login.show": "Show password",
+  "login.hide": "Hide password",
+  "login.error.401": "Wrong username or password.",
+  "login.error.409": "This username is taken. Choose another.",
+  "login.error.other": "Something went wrong. Please try again."
 }
