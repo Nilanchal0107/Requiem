@@ -231,6 +231,17 @@ def test_get_fresh_report_is_pending_and_unknown_is_404(client):
     assert client.get("/api/reports/no-such-report").status_code == 404
 
 
+def test_owned_report_is_404_for_anyone_but_its_owner(client):
+    client.post("/api/auth/register", json=CREDS)
+    report_id = client.post("/api/reports", json=INTAKE).json()["report_id"]
+    assert client.get(f"/api/reports/{report_id}").status_code == 200
+
+    other = TestClient(app)
+    assert other.get(f"/api/reports/{report_id}").status_code == 404  # guest
+    other.post("/api/auth/register", json={"username": "priya", "password": "secret1"})
+    assert other.get(f"/api/reports/{report_id}").status_code == 404  # another Entrepreneur
+
+
 def test_stream_replays_six_stages_in_order_then_done(client, no_stage_delay):
     res = client.get("/api/reports/demo-1/stream")
     assert res.status_code == 200

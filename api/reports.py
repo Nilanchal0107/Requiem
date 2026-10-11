@@ -79,8 +79,13 @@ def stream_report(report_id: str):
 
 
 @router.get("/{report_id}", response_model=Report)
-def get_report(report_id: str, session: Session = Depends(get_session)):
+def get_report(
+    report_id: str,
+    user: UserOut | None = Depends(current_user),
+    session: Session = Depends(get_session),
+):
     row = session.get(db.Report, report_id)
-    if row is None:
+    # guest reports (owner_id None) stay open to whoever holds the id; owned ones only to their owner
+    if row is None or (row.owner_id is not None and (user is None or user.id != row.owner_id)):
         raise HTTPException(404, "report not found")
     return _to_contract(row)

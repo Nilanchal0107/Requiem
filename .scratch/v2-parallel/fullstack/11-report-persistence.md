@@ -27,4 +27,4 @@
 - `_demo_report` is deleted. The stream still replays fixture events (ticket 12 stores them per report).
 - Behaviour change for Frontend: between this commit and ticket 12, `GET /api/reports/{id}` returns `status: "pending"` with `engine`/`explanation` null, and the old "any id returns the fixture" behaviour is gone (unknown id → 404).
 - `village_name` in the list comes from `fixtures/localities.json` (falls back to the code). `shortcut:` comment marks it; V3 reads names through the data loaders.
-- Any reader can GET any report by id (guests own reports too, and ids are UUIDs). No owner check on GET, matching the contract.
+- GET access (review follow-up): a guest report (`owner_id` null) is readable by whoever holds its UUID. An owned report returns 404 to anyone but its owner, since it carries eligibility data. Ticket 12 should apply the same check to the stream.
