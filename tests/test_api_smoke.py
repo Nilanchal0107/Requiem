@@ -202,6 +202,35 @@ def test_post_report_returns_id_and_rejects_bad_body(client):
     assert client.post("/api/reports", json=bad).status_code == 422
 
 
+def test_create_stores_intake_and_owner_under_new_uuid(client, db_engine):
+    import uuid
+
+    from sqlmodel import Session
+
+    from api import db
+
+    guest_id = client.post("/api/reports", json=INTAKE).json()["report_id"]
+    user = client.post("/api/auth/register", json=CREDS).json()
+    owned_id = client.post("/api/reports", json=INTAKE).json()["report_id"]
+    assert guest_id != owned_id and uuid.UUID(guest_id) and uuid.UUID(owned_id)
+
+    with Session(db_engine) as session:
+        guest, owned = session.get(db.Report, guest_id), session.get(db.Report, owned_id)
+    assert guest.owner_id is None and owned.owner_id == user["id"]
+    assert IntakeInput.model_validate(owned.input) == IntakeInput.model_validate(INTAKE)
+    assert guest.status == owned.status == "pending"
+
+
+def test_get_fresh_report_is_pending_and_unknown_is_404(client):
+    report_id = client.post("/api/reports", json=INTAKE).json()["report_id"]
+    report = Report.model_validate(client.get(f"/api/reports/{report_id}").json())
+    assert report.id == report_id and report.status == "pending"
+    assert report.engine is None and report.explanation is None
+    assert report.input == IntakeInput.model_validate(INTAKE)
+
+    assert client.get("/api/reports/no-such-report").status_code == 404
+
+
 def test_stream_replays_six_stages_in_order_then_done(client, no_stage_delay):
     res = client.get("/api/reports/demo-1/stream")
     assert res.status_code == 200
@@ -215,24 +244,25 @@ def test_stream_replays_six_stages_in_order_then_done(client, no_stage_delay):
     assert events[-1] == ("done", {"report_id": "demo-1"})
 
 
-def test_get_report_returns_fixture_under_requested_id(client):
-    res = client.get("/api/reports/demo-1")
-    assert res.status_code == 200
-    report = Report.model_validate(res.json())
-    assert report.id == "demo-1"
-    assert report.engine is not None and report.explanation is not None
-
-
-def test_list_reports_is_401_for_guest_and_one_summary_after_login(client):
+def test_list_reports_is_401_for_guest_and_only_own_newest_first(client):
     assert client.get("/api/reports").status_code == 401
 
+    other = TestClient(app)  # second Entrepreneur, own cookie jar
+    other.post("/api/auth/register", json={"username": "priya", "password": "secret1"})
+    other.post("/api/reports", json=INTAKE)
+
     client.post("/api/auth/register", json=CREDS)
+    assert client.get("/api/reports").json() == []
+    first = client.post("/api/reports", json=INTAKE).json()["report_id"]
+    second = client.post("/api/reports", json={**INTAKE, "archetype_id": "poultry"}).json()["report_id"]
+
     res = client.get("/api/reports")
     assert res.status_code == 200
     summaries = [ReportSummary.model_validate(s) for s in res.json()]
-    assert len(summaries) == 1
-    assert summaries[0].archetype_id == "dairy"
+    assert [s.id for s in summaries] == [second, first]
+    assert summaries[1].archetype_id == "dairy" and summaries[0].archetype_id == "poultry"
     assert summaries[0].village_name == "Pimpalgaon Baswant"
+    assert summaries[0].verdict is None  # pending: no engine result yet
 
 
 def test_run_pipeline_is_declared_but_not_implemented():

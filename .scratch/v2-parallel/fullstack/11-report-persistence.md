@@ -6,7 +6,7 @@
 
 **Blocked by:** 10
 
-**Status:** ready-for-agent
+**Status:** done
 
 ## Notes
 
@@ -15,7 +15,16 @@
 
 ## Acceptance criteria
 
-- [ ] Create returns a new UUID each time, and the row stores the intake and the owner (or null).
-- [ ] Get on an unknown id gets 404.
-- [ ] List as a guest gets 401. Logged in, it shows only that Entrepreneur's reports, newest first.
-- [ ] Every response validates against its contract model.
+- [x] Create returns a new UUID each time, and the row stores the intake and the owner (or null).
+- [x] Get on an unknown id gets 404.
+- [x] List as a guest gets 401. Logged in, it shows only that Entrepreneur's reports, newest first.
+- [x] Every response validates against its contract model.
+
+## Comments
+
+- Commit: `V2-11: Report persistence` (see git log).
+- `_to_contract(row)` in `api/reports.py` turns a `db.Report` row into the contract `Report`. Ticket 12 should reuse it.
+- `_demo_report` is deleted. The stream still replays fixture events (ticket 12 stores them per report).
+- Behaviour change for Frontend: between this commit and ticket 12, `GET /api/reports/{id}` returns `status: "pending"` with `engine`/`explanation` null, and the old "any id returns the fixture" behaviour is gone (unknown id → 404).
+- `village_name` in the list comes from `fixtures/localities.json` (falls back to the code). `shortcut:` comment marks it; V3 reads names through the data loaders.
+- Any reader can GET any report by id (guests own reports too, and ids are UUIDs). No owner check on GET, matching the contract.

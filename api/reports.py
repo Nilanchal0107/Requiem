@@ -1,13 +1,14 @@
 import json
 import time
-import uuid
 from collections.abc import Iterator
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
+from sqlmodel import Session, select
 
-from api.contracts import IntakeInput, Report, ReportCreated, ReportSummary, StageEvent
-from api.deps import require_user
+from api import db
+from api.contracts import IntakeInput, Report, ReportCreated, ReportSummary, StageEvent, UserOut
+from api.deps import current_user, get_session, require_user
 from api.settings import fixture
 
 router = APIRouter(prefix="/api/reports", tags=["reports"])
@@ -24,30 +25,46 @@ def _replay_fixture_stages(report_id: str, events: list[StageEvent]) -> Iterator
     yield f"event: done\ndata: {json.dumps({'report_id': report_id})}\n\n"
 
 
-def _demo_report(report_id: str | None = None) -> Report:
-    """V1 only: the fixture report, optionally under a requested id."""
-    data = fixture("report.json")
-    return Report.model_validate({**data, "id": report_id} if report_id else data)
+def _to_contract(row: db.Report) -> Report:
+    return Report(
+        id=row.id,
+        status=row.status,
+        input=IntakeInput.model_validate(row.input),
+        engine=row.engine,
+        explanation=row.explanation,
+        created_at=row.created_at.isoformat(),
+        owner_id=row.owner_id,
+    )
 
 
 @router.post("", response_model=ReportCreated)
-def create_report(body: IntakeInput):
-    # shortcut: nothing persisted in V1, the id is only handed back; V2 saves the report and starts run_pipeline
-    return ReportCreated(report_id=str(uuid.uuid4()))
+def create_report(
+    body: IntakeInput,
+    user: UserOut | None = Depends(current_user),
+    session: Session = Depends(get_session),
+):
+    row = db.Report(status="pending", input=body.model_dump(mode="json"), owner_id=user.id if user else None)
+    session.add(row)
+    session.commit()
+    return ReportCreated(report_id=row.id)
 
 
-@router.get("", response_model=list[ReportSummary], dependencies=[Depends(require_user)])
-def list_reports():
-    report = _demo_report()
-    village = next(v for v in fixture("localities.json")["villages"] if v["code"] == report.input.village_code)
+@router.get("", response_model=list[ReportSummary])
+def list_reports(user: UserOut = Depends(require_user), session: Session = Depends(get_session)):
+    rows = session.exec(
+        select(db.Report).where(db.Report.owner_id == user.id).order_by(db.Report.created_at.desc())
+    ).all()
+    # shortcut: village names come from the fixture localities, V3 reads them through the data loaders
+    names = {v["code"]: v["name"] for v in fixture("localities.json")["villages"]}
     return [
         ReportSummary(
-            id=report.id,
-            archetype_id=report.input.archetype_id,
-            village_name=village["name"],
-            verdict=report.engine.verdict.level if report.engine else None,
-            created_at=report.created_at,
+            id=row.id,
+            archetype_id=row.input["archetype_id"],
+            village_name=names.get(row.input["village_code"], row.input["village_code"]),
+            verdict=row.engine["verdict"]["level"] if row.engine else None,
+            created_at=row.created_at.isoformat(),
         )
+        for row in rows
     ]
 
 
@@ -62,5 +79,8 @@ def stream_report(report_id: str):
 
 
 @router.get("/{report_id}", response_model=Report)
-def get_report(report_id: str):
-    return _demo_report(report_id)
+def get_report(report_id: str, session: Session = Depends(get_session)):
+    row = session.get(db.Report, report_id)
+    if row is None:
+        raise HTTPException(404, "report not found")
+    return _to_contract(row)
