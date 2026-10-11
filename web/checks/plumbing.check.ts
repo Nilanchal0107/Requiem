@@ -4,7 +4,9 @@ import assert from "node:assert/strict";
 import { translate, type Catalog, type Lang } from "../src/i18n/resolve.ts";
 import { ApiError, getReport, login, listReports, request } from "../src/api.ts";
 import { parseTab } from "../src/pages/report/tab.ts";
-import { formatFigure, formatMoneyWords } from "../src/lib/format.ts";
+import { formatCompact, formatDate, formatFigure, formatHeadline, formatInr, formatMoneyWords } from "../src/lib/format.ts";
+import { worstSignal } from "../src/lib/verdict.ts";
+import { shareLink } from "../src/lib/share.ts";
 import { useSimulate } from "../src/hooks/useSimulate.ts";
 import { useChat } from "../src/hooks/useChat.ts";
 import { useCompare } from "../src/hooks/useCompare.ts";
@@ -145,6 +147,33 @@ assert.equal(formatFigure({ ...figure, value: 10, unit: "%" }, "hi"), "१०%")
 assert.equal(formatMoneyWords(1e5, "en"), "₹1 lakh");
 assert.equal(formatMoneyWords(150000, "hi"), "₹१.५ लाख");
 assert.equal(formatMoneyWords(500, "en"), "₹500");
+// Headline: lakh words from one lakh up, exact rupees below; chart label and date forms.
+assert.equal(formatHeadline(figure, "en"), "₹4.17 lakh");
+assert.equal(formatHeadline({ ...figure, value: 9632 }, "en"), "₹9,632");
+assert.equal(formatHeadline({ ...figure, value: 9632 }, "mr"), "₹९,६३२");
+assert.equal(formatInr(1234567, "en"), "₹12,34,567");
+assert.equal(formatCompact(164600, "en"), "₹1.6L");
+assert.equal(formatCompact(164600, "hi").replace(/\s/g, " "), "₹१.६ लाख"); // ICU puts a no-break space before the word
+assert.equal(formatDate("2026-10-11", "en"), "11 Oct 2026");
+
+// worstSignal: the worst level explains the Verdict; the first one wins a tie; no signals gives null.
+const sig = (name: "dscr" | "market_gap" | "payback" | "scheme", level: "feasible" | "feasible_with_changes" | "not_feasible") => ({ name, level, figure_id: null });
+assert.equal(worstSignal({ level: "feasible", signals: [] }), null);
+assert.equal(worstSignal({ level: "not_feasible", signals: [sig("dscr", "feasible"), sig("payback", "not_feasible"), sig("scheme", "feasible_with_changes")] })!.name, "payback");
+assert.equal(worstSignal({ level: "feasible_with_changes", signals: [sig("dscr", "feasible_with_changes"), sig("scheme", "feasible_with_changes")] })!.name, "dscr");
+
+// shareLink: native sheet when present; copy the link when it is missing or fails; a closed sheet copies nothing.
+const page = { title: "DPR", url: "https://x/reports/1?tab=bank" };
+const copied: string[] = [];
+const clipboard = { writeText: async (text: string) => void copied.push(text) };
+assert.equal(await shareLink({ share: async () => {}, clipboard }, page), "shared");
+assert.equal(await shareLink({ clipboard }, page), "copied");
+assert.deepEqual(copied, [page.url]);
+assert.equal(await shareLink({ share: async () => { throw new Error("denied"); }, clipboard }, page), "copied");
+const abort = Object.assign(new Error("closed"), { name: "AbortError" });
+assert.equal(await shareLink({ share: async () => { throw abort; }, clipboard }, page), "cancelled");
+assert.equal(copied.length, 2);
+
 // Declared stubs: the V2 hooks throw "not implemented" until their ticket.
 assert.throws(() => useSimulate(), /not implemented/);
 assert.throws(() => useChat(), /not implemented/);

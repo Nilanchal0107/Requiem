@@ -170,3 +170,14 @@
     transition-duration: 0.001ms !important;
   }
 }
+
+/* Print: A4, and the Bank DPR page shows only the document (the chrome carries print:hidden). */
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm 15mm 20mm;
+  }
+  body {
+    background: white;
+  }
+}

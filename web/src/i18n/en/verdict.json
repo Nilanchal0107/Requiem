@@ -1,7 +1,22 @@
 {
-  "verdict.feasible": "Feasible",
-  "verdict.feasible_with_changes": "Feasible with changes",
-  "verdict.not_feasible": "Not feasible",
+  "verdict.feasible": "Good to start",
+  "verdict.feasible_with_changes": "Possible with changes",
+  "verdict.not_feasible": "Not advisable right now",
   "verdict.scheme": "Scheme",
-  "verdict.noScheme": "No scheme matched"
+  "verdict.noScheme": "No scheme matched",
+  "verdict.loan": "Loan",
+  "verdict.emi": "Monthly EMI",
+  "verdict.seePath": "See how to make it work",
+  "verdict.reason.dscr.feasible": "Your profit covers the EMI {{min_dscr}} times",
+  "verdict.reason.dscr.feasible_with_changes": "Your profit covers the EMI only {{min_dscr}} times",
+  "verdict.reason.dscr.not_feasible": "Your profit doesn't cover the EMI",
+  "verdict.reason.market_gap.feasible": "Your village has enough buyers",
+  "verdict.reason.market_gap.feasible_with_changes": "Buyers in your village are limited",
+  "verdict.reason.market_gap.not_feasible": "Your village has too few buyers",
+  "verdict.reason.payback.feasible": "You get your money back in {{payback_months}} months",
+  "verdict.reason.payback.feasible_with_changes": "It takes {{payback_months}} months to get your money back",
+  "verdict.reason.payback.not_feasible": "It takes too long to get your money back",
+  "verdict.reason.scheme.feasible": "A government scheme fits you",
+  "verdict.reason.scheme.feasible_with_changes": "Only part of the loan fits a government scheme",
+  "verdict.reason.scheme.not_feasible": "No government scheme fits you"
 }

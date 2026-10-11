@@ -41,13 +41,17 @@ export function t(key: string): string {
 }
 
 // Re-renders the calling component when the language changes.
-export function useT(): (key: string) => string {
-  const lang = useSyncExternalStore(
+export function useLang(): Lang {
+  return useSyncExternalStore(
     (notify) => {
       listeners.add(notify);
       return () => listeners.delete(notify);
     },
     () => current,
   );
+}
+
+export function useT(): (key: string) => string {
+  const lang = useLang();
   return (key) => translate(catalogs, lang, key);
 }

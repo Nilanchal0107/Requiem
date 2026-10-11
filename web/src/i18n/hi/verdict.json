@@ -1,1 +1,22 @@
-{}
+{
+  "verdict.feasible": "शुरू करना ठीक है",
+  "verdict.feasible_with_changes": "बदलाव के साथ संभव",
+  "verdict.not_feasible": "अभी सही नहीं",
+  "verdict.scheme": "योजना",
+  "verdict.noScheme": "कोई योजना नहीं मिली",
+  "verdict.loan": "कर्ज",
+  "verdict.emi": "मासिक EMI",
+  "verdict.seePath": "देखें कैसे बनेगा",
+  "verdict.reason.dscr.feasible": "आपका मुनाफ़ा EMI से {{min_dscr}} गुना है",
+  "verdict.reason.dscr.feasible_with_changes": "आपका मुनाफ़ा EMI से सिर्फ़ {{min_dscr}} गुना है",
+  "verdict.reason.dscr.not_feasible": "आपका मुनाफ़ा EMI भरने के लिए काफ़ी नहीं है",
+  "verdict.reason.market_gap.feasible": "आपके गाँव में खरीदार काफ़ी हैं",
+  "verdict.reason.market_gap.feasible_with_changes": "आपके गाँव में खरीदार कम हैं",
+  "verdict.reason.market_gap.not_feasible": "आपके गाँव में खरीदार बहुत कम हैं",
+  "verdict.reason.payback.feasible": "आपका पैसा {{payback_months}} महीने में वापस आएगा",
+  "verdict.reason.payback.feasible_with_changes": "पैसा वापस आने में {{payback_months}} महीने लगेंगे",
+  "verdict.reason.payback.not_feasible": "पैसा वापस आने में बहुत समय लगेगा",
+  "verdict.reason.scheme.feasible": "एक सरकारी योजना आपके लिए ठीक है",
+  "verdict.reason.scheme.feasible_with_changes": "कर्ज का सिर्फ़ एक हिस्सा सरकारी योजना में आता है",
+  "verdict.reason.scheme.not_feasible": "कोई सरकारी योजना आपके लिए नहीं बैठती"
+}
