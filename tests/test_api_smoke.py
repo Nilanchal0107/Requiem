@@ -242,8 +242,9 @@ def test_owned_report_is_404_for_anyone_but_its_owner(client):
     assert other.get(f"/api/reports/{report_id}").status_code == 404  # another Entrepreneur
 
 
-def test_stream_replays_six_stages_in_order_then_done(client, no_stage_delay):
-    res = client.get("/api/reports/demo-1/stream")
+def test_stream_plays_six_stages_in_order_then_done_and_stores_report(client, no_stage_delay):
+    report_id = client.post("/api/reports", json=INTAKE).json()["report_id"]
+    res = client.get(f"/api/reports/{report_id}/stream")
     assert res.status_code == 200
     assert res.headers["content-type"].startswith("text/event-stream")
 
@@ -251,8 +252,42 @@ def test_stream_replays_six_stages_in_order_then_done(client, no_stage_delay):
     stage_events = [StageEvent.model_validate(data) for kind, data in events if kind == "stage"]
     assert [e.stage for e in stage_events] == [s for s in STAGES for _ in range(2)]
     assert [e.status for e in stage_events] == ["running", "done"] * 6
+    assert events[-1] == ("done", {"report_id": report_id})
 
-    assert events[-1] == ("done", {"report_id": "demo-1"})
+    report = Report.model_validate(client.get(f"/api/reports/{report_id}").json())
+    assert report.id == report_id and report.status == "done"
+    assert report.engine is not None and report.explanation is not None
+    assert report.input == IntakeInput.model_validate(INTAKE)
+
+
+def test_second_stream_replays_stored_events_without_rerunning(client, no_stage_delay, monkeypatch):
+    from api import reports
+
+    report_id = client.post("/api/reports", json=INTAKE).json()["report_id"]
+    first = client.get(f"/api/reports/{report_id}/stream").text
+
+    def must_not_run(*_):
+        raise AssertionError("stages re-ran on replay")
+
+    monkeypatch.setattr(reports, "_run_stages", must_not_run)
+    second = client.get(f"/api/reports/{report_id}/stream").text
+    assert second == first and len(parse_sse(first)) == 13  # byte-identical: 12 stages + done
+
+
+def test_stream_without_fixtures_is_501_not_a_broken_stream(client, monkeypatch):
+    from api import settings
+
+    report_id = client.post("/api/reports", json=INTAKE).json()["report_id"]
+    monkeypatch.setattr(settings, "USE_FIXTURES", False)
+    assert client.get(f"/api/reports/{report_id}/stream").status_code == 501
+
+
+def test_stream_unknown_or_someone_elses_report_is_404(client):
+    assert client.get("/api/reports/no-such-report/stream").status_code == 404
+
+    client.post("/api/auth/register", json=CREDS)
+    report_id = client.post("/api/reports", json=INTAKE).json()["report_id"]
+    assert TestClient(app).get(f"/api/reports/{report_id}/stream").status_code == 404
 
 
 def test_list_reports_is_401_for_guest_and_only_own_newest_first(client):
