@@ -44,3 +44,6 @@
   - `ReportHeader` is a named export, matching the components folder. The sheets and tabs are named exports too. `Report.tsx` keeps its default export for the lazy router.
   - `report.engine` null (pending or failed report) shows `report.notReady` instead of crashing.
 - **For V2:** `ExplanationTab` takes `explanation`, `NumbersTab` and `ReportHeader` take `engine`, and the two sheets take `open` and `onOpenChange`. Each file's body is the V2 surface; the page does not need to change to fill them in.
+- **Review (`HEAD~1..HEAD`, Standards and Spec in parallel sub-agents):**
+  - Fixed in the follow-up commit: `useReport` could show the previous report for one render after the id changed, so results are now tagged with their id and attempt. Retry button and bottom buttons are 48px tall. `ErrorState.retryLabel` is required. Buttons and tabs have Lucide icons (`aria-hidden`). Bottom bar has the safe-area inset and the `ui-ux.md` shadow. Bank heading 4 matches the PRD casing.
+  - Not changed: the 360px layout check (still unverified). Sheets are duplicated on purpose (the ticket asks for one file each). The tab list is hardcoded in `Report.tsx` next to `TABS`. `report.title` is an unused key from before this ticket. The text is rendered raw, so V2 must resolve `{{figure_id}}` placeholders before render.

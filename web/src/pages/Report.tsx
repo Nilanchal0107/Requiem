@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useParams, useSearchParams } from "react-router"
+import { BookOpen, Calculator, FileText, MessageCircle, SlidersHorizontal } from "lucide-react"
 import { BottomActionBar } from "@/components/BottomActionBar"
 import { ErrorState } from "@/components/ErrorState"
 import { Button } from "@/components/ui/button"
@@ -42,13 +43,16 @@ export default function Report() {
       <ReportHeader engine={report.engine} />
       <Tabs value={parseTab(params.get("tab"))} onValueChange={(tab) => setParams({ tab })}>
         <TabsList className="w-full">
-          <TabsTrigger value="explanation" className="min-h-12 flex-1">
+          <TabsTrigger value="explanation" className="min-h-12 flex-1 gap-2">
+            <BookOpen aria-hidden="true" className="size-5" />
             {t("report.tab.explanation")}
           </TabsTrigger>
-          <TabsTrigger value="numbers" className="min-h-12 flex-1">
+          <TabsTrigger value="numbers" className="min-h-12 flex-1 gap-2">
+            <Calculator aria-hidden="true" className="size-5" />
             {t("report.tab.numbers")}
           </TabsTrigger>
-          <TabsTrigger value="bank" className="min-h-12 flex-1">
+          <TabsTrigger value="bank" className="min-h-12 flex-1 gap-2">
+            <FileText aria-hidden="true" className="size-5" />
             {t("report.tab.bank")}
           </TabsTrigger>
         </TabsList>
@@ -64,10 +68,12 @@ export default function Report() {
       </Tabs>
 
       <BottomActionBar>
-        <Button variant="outline" className="h-12 flex-1" onClick={() => setWhatIfOpen(true)}>
+        <Button variant="outline" className="h-12 flex-1 gap-2" onClick={() => setWhatIfOpen(true)}>
+          <SlidersHorizontal aria-hidden="true" className="size-5" />
           {t("report.tryChanges")}
         </Button>
-        <Button variant="outline" className="h-12 flex-1" onClick={() => setChatOpen(true)}>
+        <Button variant="outline" className="h-12 flex-1 gap-2" onClick={() => setChatOpen(true)}>
+          <MessageCircle aria-hidden="true" className="size-5" />
           {t("report.ask")}
         </Button>
       </BottomActionBar>
