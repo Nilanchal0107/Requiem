@@ -1,20 +1,37 @@
-﻿# secrets
+# secrets (commit .env.example only)
 .env
+.env.*
+!.env.example
 
 # python
 .venv/
 __pycache__/
-*.pyc
+*.py[cod]
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
 # local db
 *.db
+*.db-journal
 
 # node
 node_modules/
 web/dist/
+*.tsbuildinfo
+
+# generated diagram QA output (archify)
+docs/diagrams/*.visual-check.*
+
+# logs and OS junk
+*.log
+.DS_Store
+Thumbs.db
 
 # editor / local claude settings
 .claude/settings.local.json
 .vscode/
 .idea/
+
+# LLM record/replay cache (regenerated locally)
+data/llm_cache/

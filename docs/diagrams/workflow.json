@@ -60,7 +60,7 @@
       "col": 2,
       "type": "backend",
       "label": "SSE stream",
-      "sublabel": "status = running",
+      "sublabel": "runs the pipeline",
       "width": 140
     },
     {
@@ -69,7 +69,7 @@
       "col": 3,
       "type": "backend",
       "label": "run_engine",
-      "sublabel": "market, cost, Schemes, Verdict",
+      "sublabel": "one call, live OSM",
       "tag": "all numbers",
       "width": 140
     },
@@ -114,8 +114,8 @@
       "lane": "fail",
       "col": 4,
       "type": "messagebus",
-      "label": "Fallback",
-      "sublabel": "Groq, then cache replay",
+      "label": "Fallback chain",
+      "sublabel": "else numbers only",
       "width": 140
     },
     {
@@ -187,6 +187,13 @@
       "label": "raw digits",
       "variant": "security",
       "role": "error"
+    },
+    {
+      "id": "progress",
+      "from": "stream",
+      "to": "report",
+      "label": "StageEvents",
+      "variant": "dashed"
     }
   ]
 }
